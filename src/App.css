@@ -2,31 +2,144 @@
   text-align: center;
 }
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 40vmin;
+/* Login */
+
+.login-background {
+  height: 100vh;
+  width: 100vw;
+  background-image: url('http://www.usclimateplan.org/wp-content/uploads/2018/11/full-hd-p-las-vegas-wallpapers-desktop-backgrounds-1680-1050-complex-wallpaper-hd-awesome-0.jpg');
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.login {
+  background-color: black;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 5%;
+  height: 25vh;
+  width: 25vw;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+}
+
+.login h3 {
+  color: white;
+  font-size: 30px;
+  margin-bottom: 3vh;
+}
+
+.login p {
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.login input {
+  background-color: transparent;
+  color: white;
+  border: none;
+  border-bottom: 2px blue solid;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+input:focus {
+  outline: none;
+  /* box-shadow: 0 0 10px #719ECE; */
 }
+
+.login-error {
+  margin-top: 7px;
+}
+
+/* Homepage */
+
+.homepage-background {
+  height: 100vh;
+  width: 100vw;
+  background-image: url('http://www.pizzarusticachicago.com/upload/2018/09/13/f157aed99e47df4f.jpg');
+  background-size: cover;
+  background-position: bottom center;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  /* poker table image  - https://pngimage.net/wp-content/uploads/2018/06/poker-table-png-5.png */
+}
+
+h2 {
+  color: white;
+  font-size: 30px;
+  margin-bottom: 8px;
+}
+
+/* Leaderboard */
+
+.leaderboard {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: black;
+  opacity: .8;
+  border-radius: 5%;
+  height: 80vh;
+  width: 32vw;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 2px solid white;
+  border-right: 2px solid white;
+  height: 70vh;
+  width: 30vw; 
+}
+
+.grid span {
+  padding: 8px 4px;
+  border-left: 2px solid white;
+  border-bottom: 2px solid white;
+  color: white;
+}
+
+/* Add Money and Join Game */
+
+.money-and-game {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  height: 80vh;
+}
+
+.add-money {
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 5%;
+  color: white;
+  height: 25vh;
+  width: 32vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.inner-money-div {
+  height: 30vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.join-game {
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 5%;
+  color: white;
+  height: 15vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.join-game h2 {
+  margin-bottom: 18px;
+}
+
+
