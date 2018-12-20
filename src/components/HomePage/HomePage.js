@@ -18,7 +18,6 @@ class HomePage extends Component {
                     <div className='join-game'>
                         <h2>Join Game</h2>
                         <JoinGame />
-                        <button>Join</button>
                     </div>
                 </div>
             </div>

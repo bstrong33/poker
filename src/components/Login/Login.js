@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import { connect } from 'react-redux';
+import { updateUsername, updateId } from './../../ducks/reducer';
 
 class Login extends Component {
     constructor(props) {
@@ -18,6 +20,8 @@ class Login extends Component {
         this.setState({
             username: '', password: '', message: res.data.message
         })
+        this.props.updateUsername(res.data.username)
+        this.props.updateId(res.data.id)
         if (res.data.loggedIn) {
             this.props.history.push('/homepage')
         }
@@ -29,6 +33,8 @@ class Login extends Component {
         this.setState({
             username: '', password: '', message: res.data.message
         })
+        this.props.updateUsername(res.data.username)
+        this.props.updateId(res.data.id)
         if (res.data.loggedIn) {
             this.props.history.push('/homepage')
         }
@@ -66,4 +72,8 @@ class Login extends Component {
     }
 }
 
-export default Login;
+function mapStateToProps(state) {
+    return {...state}
+}
+
+export default connect(mapStateToProps, {updateUsername, updateId})(Login);
