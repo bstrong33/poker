@@ -15,7 +15,7 @@ module.exports = {
             let createdPlayer = await db.create_player([username, hash]);
             req.session.user = { username: createdPlayer[0].username, id: createdPlayer[0].id }
             res.status(200).send({
-                loggedIn: true, message: 'Register successful', username: player[0].username, id: player[0].id
+                loggedIn: true, message: 'Register successful', username: createdPlayer[0].username, id: createdPlayer[0].id
             })
         }
     },

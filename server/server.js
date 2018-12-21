@@ -33,10 +33,15 @@ let players = [];
 let playersInHand = [];
 let playersReady = 0;
 let pokerId = 1;
-pokerIdTurn = 3;
+let pokerIdTurn = 3;
 let flop = [[]];
 let turn = [[]];
 let river = [[]];
+let flopRevealed = false;
+let turnRevealed = false;
+let riverRevealed = false;
+let turnsTaken = 0;
+let potTotal = 75;
 
 
 // Sockets
@@ -59,7 +64,6 @@ io.on('connection', socket => {
         pokerId++
         data.betTurn = false
         players.push(data)
-        console.log(players)
     })
 
     socket.on('ready', data => {
@@ -126,38 +130,113 @@ io.on('connection', socket => {
 
     function preflopBetting(data) {
         for ( let i = 0; i < playersInHand.length; i++) {
+            // If the pokerIdTurn excceds the length of the array it will start over at the beginning of the array of players
             if (pokerIdTurn > playersInHand.length) {
                 pokerIdTurn = playersInHand[0].pokerId
-                console.log('poker turn', pokerIdTurn)
+                // console.log('poker turn', pokerIdTurn)
             } 
-            if (pokerIdTurn === playersInHand[i].pokerId) {
+            // If the player doesn't have cards (they have folded) then the pokerIdTurn increments and the function is rerun
+            if (pokerIdTurn === playersInHand[i].pokerId && playersInHand[i].cards.length === 0) {
+                pokerIdTurn++
+                preflopBetting(data)
+            }  
+
+            // If the player has cards and their pokerId matches the turnId then it sets their turn to true
+            else if (pokerIdTurn === playersInHand[i].pokerId) {
                 playersInHand[i].betTurn = true
-                io.to(data.room).emit('preflop betting', playersInHand)
-                console.log('emitted betting')
+                io.to(data.room).emit('preflop betting', {playersInHand, potTotal})
             }
+            
         }
     }
 
     socket.on('turn of preflop betting', data => {
         // console.log(data)
         pokerIdTurn++
+        turnsTaken++
         for (let i = 0; i < playersInHand.length; i++) {
+            // updates potTotal by looking at the difference in the old and new bet, but only if bet is not zero (prevents potTotal decreaseing on a fold)
+            // Takes the player who just had a turn and updates the playersInHand array with their new information
             if (data.player[0].id === playersInHand[i].id) {
+                if (data.player[0].bet !== 0) {
+                let originalBet = playersInHand[i].bet
+                let newBet = data.player[0].bet
+                let changeInBet = newBet - originalBet;
+                potTotal += changeInBet
+                }
+
                 playersInHand.splice(i, 1, data.player[0])
-                console.log('after bet', playersInHand)
             }
         }
+        
+        // creates array of only players with cards
+        let playersWithCardsToSort = [...playersInHand]
 
+        let playersWithCards = playersWithCardsToSort.filter(player => {
+            return player.cards.length !== 0
+        })
+
+        // .sort alters the original array, so I create a copy and then sort it so I can use the sorted values seperatlely
+        let playersToSort = [...playersInHand]
+        
+        let highestBet = playersToSort.sort( (a, b) => {
+            return b.bet - a.bet
+        })[0]
+        
         function checkBets (player) {
-            return player.bet === data.player[0].bet
+            return player.bet === highestBet.bet
         }
-
-        if(playersInHand.every(checkBets)){
-            console.log('Betting round finished')
+        // Checks if all players with cards have equal bets, if not keep running betting
+        // Also checks how many turns have been taken and which round of betting has commenced
+        if (playersWithCards.every(checkBets) && riverRevealed && turnsTaken >= playersWithCards.length) {
+            console.log('ready to evaluate hands')
+        } else if (playersWithCards.every(checkBets) && turnRevealed && turnsTaken >= playersWithCards.length) {
+            io.to(data.room).emit('river', river)
+        } else if (playersWithCards.every(checkBets) && flopRevealed && turnsTaken >= playersWithCards.length) {
+            io.to(data.room).emit('turn', turn)
+        } else if (playersWithCards.every(checkBets) && turnsTaken >= playersWithCards.length){
+            io.to(data.room).emit('flop', flop)
         } else {
             preflopBetting(data);
-            console.log('reran preflop betting')
         }
+        
+    })
+
+    // After flop has been sent this will reset the number of turns taken and whose turn it will be (through the pokerIdTurn)
+    socket.on('flop betting', data => {
+        pokerIdTurn = 1
+        turnsTaken = 0
+        flopRevealed = true
+
+        playersInHand.forEach((val, i, arr) => {
+            arr[i].bet = 0;
+        })
+
+        preflopBetting(data)
+    })
+
+    socket.on('turn betting', data => {
+        pokerIdTurn = 1
+        turnsTaken = 0
+        turnRevealed = true
+
+        playersInHand.forEach((val, i, arr) => {
+            arr[i].bet = 0;
+        })
+
+        preflopBetting(data)
+    })
+
+    socket.on('river betting', data => {
+        pokerIdTurn = 1
+        turnsTaken = 0
+        riverRevealed = true
+
+        playersInHand.forEach((val, i, arr) => {
+            arr[i].bet = 0;
+        })
+
+        preflopBetting(data)
     })
 
 
