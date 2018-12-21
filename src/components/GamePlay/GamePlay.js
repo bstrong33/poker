@@ -13,9 +13,13 @@ class GamePlay extends Component {
             room: '',
             joined: false,
             joinPressed: false,
+            numberOfPlayersReady: 0,
             allPlayersJoined: false,
             betAmount: 0,
+            betAllowed: true,
+            enoughMoney: true,
             betTurn: false,
+            canCall: true,
             canCheck: false,
             flop: null,
             turn: null,
@@ -30,11 +34,12 @@ class GamePlay extends Component {
         let startMoney = parseInt(initialMoney);
         this.socket = io();
         this.socket.on('room joined', data => {
-            this.joinSuccess()
+            this.joinSuccess(data)
         })
         this.socket.emit('join game', {username, id, startMoney})
         this.socket.on('dealt out', this.viewCards)
         this.socket.on('preflop betting', this.allowPreflopBetting)
+        this.socket.on('no money left', this.noMoneyLeft)
         this.socket.on('flop', this.setFlop)
         this.socket.on('turn', this.setTurn)
         this.socket.on('river', this.setRiver)
@@ -52,9 +57,10 @@ class GamePlay extends Component {
         }
     }
 
-    joinSuccess = () => {
+    joinSuccess = (data) => {
         this.setState({
-            joined: true
+            joined: true,
+            numberOfPlayersReady: data
         })
     }
 
@@ -124,26 +130,104 @@ class GamePlay extends Component {
         this.setState({otherPlayers, potTotal})
     }
 
+    // This function will fire if the player has no money in order to update the screen but bypass needing to have the player take a turn
+    noMoneyLeft = data => {
+        let { playersInHand, potTotal } = data
+        let otherPlayers = []
+
+        for (let i = 0; i < playersInHand.length; i++) {
+            // updates players and otherPlayers in state to reference for betting purposes
+            if (playersInHand[i].id === this.props.id) {
+                const updatedPlayerHand = []
+                updatedPlayerHand.push(playersInHand[i])
+                this.setState({
+                    player: updatedPlayerHand
+                })
+            }
+            else {
+                otherPlayers.push(playersInHand[i])
+            }
+        }
+        this.setState({otherPlayers, potTotal}, 
+            () => this.displayPreflopBetting())
+    }
+
     setPreflopBetting = () => {
+
+        let playersToSort = [...this.state.otherPlayers];
+        let highestBet = playersToSort.sort( (a, b) => {
+            return b.bet - a.bet
+        })[0]
+
         let { betAmount } = this.state;
 
         // Spreading player from state so it can be edited
         let player = [...this.state.player];
 
-        // Adding the amount betted to the total bet
-        player[0].bet += parseInt(betAmount);
+        // checking if player has enough money to make a bet and setting logic for the edge cases when they can't follow the typical betting rules because of having too little money
+        if (player[0].startMoney < 2 * highestBet.bet) {
+            if (parseInt(betAmount) === player[0].startMoney) {
+                let bettedAmount = parseInt(betAmount)
+                player[0].bet += bettedAmount;
+                player[0].startMoney -= bettedAmount
+                player[0].betTurn = false
+                
+                this.setState({
+                    betTurn: false,
+                    player,
+                    betAllowed: true,
+                    enoughMoney: true
+                }, () => this.displayPreflopBetting())
+            } else {
+                this.setState({enoughMoney: false})
+            }
+        } else if (player[0].startMoney < 50) {
+            if (betAmount !== 25) {
+                this.setState({enoughMoney: false, canCall: true})
+            } else {
+                let bettedAmount = parseInt(betAmount)
+                player[0].bet += bettedAmount;
+                player[0].startMoney -= bettedAmount
+                player[0].betTurn = false
+                
+                this.setState({
+                    betTurn: false,
+                    player,
+                    betAllowed: true,
+                    enoughMoney: true
+                }, () => this.displayPreflopBetting())
+            }
+        }
+          else {
+            // check value of bet to ensure it is at least 50, is divisible by 25, and is double the highest bet on the board
+            if (betAmount >= 50 && betAmount % 25 === 0 && betAmount/highestBet.bet >= 2) {
+                // Check if player has enough money to make the delcared bet
+                if (player[0].startMoney >= parseInt(betAmount)){
+                    // Adding the amount betted to the total bet
+                    player[0].bet += parseInt(betAmount);
 
-        // Decreasing money by amount betted
-        let bettedAmount = parseInt(betAmount);
-        player[0].startMoney -= bettedAmount
+                    // Decreasing money by amount betted
+                    let bettedAmount = parseInt(betAmount);
+                    player[0].startMoney -= bettedAmount
 
-        // Changing status so it is no longer set to allow betting in the player object
-        player[0].betTurn = false
+                    // Changing status so it is no longer set to allow betting in the player object
+                    player[0].betTurn = false
 
-        this.setState({
-            betTurn: false,
-            player
-        }, () => this.displayPreflopBetting())
+                    this.setState({
+                        betTurn: false,
+                        player,
+                        betAllowed: true,
+                        enoughMoney: true
+                    }, () => this.displayPreflopBetting())
+                } else {
+                    this.setState({enoughMoney: false})
+                }
+            } else {
+                this.setState({
+                    betAllowed: false
+                })
+            }
+        }
     }
     
     // Sending updated bet to server so it can be displayed to all players
@@ -178,21 +262,29 @@ class GamePlay extends Component {
         let highestBet = sortedOtherPlayers.sort( (a, b) => {
             return b.bet - a.bet
         })[0]
-        console.log(highestBet)
 
         let player = [...this.state.player];
         let { bet } = player[0];
 
-        // startMoney only changes by the amount being called while still displaying the total amount of money bet
-        let callAmount = highestBet.bet - bet
-        player[0].bet = highestBet.bet
-        player[0].startMoney -= callAmount
-        player[0].betTurn = false;
+        if (player[0].startMoney >= highestBet.bet) {
+            // startMoney only changes by the amount being called while still displaying the total amount of money bet
+            let callAmount = highestBet.bet - bet
+            player[0].bet = highestBet.bet
+            player[0].startMoney -= callAmount
+            player[0].betTurn = false;
 
-        this.setState({
-            betTurn: false,
-            player
-        }, () => this.displayPreflopBetting())
+            this.setState({
+                betTurn: false,
+                player,
+                betAllowed: true,
+                enoughMoney: true
+            }, () => this.displayPreflopBetting())
+        } else {
+            this.setState({
+                canCall: false, 
+                betAllowed: true, 
+                enoughMoney: true})
+        }
     }
 
     // check
@@ -203,7 +295,9 @@ class GamePlay extends Component {
 
         this.setState({
             betTurn: false,
-            player
+            player,
+            betAllowed: true,
+            enoughMoney: true
         }, () => this.displayPreflopBetting())
     }
 
@@ -217,7 +311,10 @@ class GamePlay extends Component {
 
         this.setState({
             betTurn: false,
-            player
+            player,
+            betAllowed: true,
+            enoughMoney: true,
+            canCall: true
         }, () => this.displayPreflopBetting())
     }
 
@@ -248,17 +345,17 @@ class GamePlay extends Component {
         return (
             <div>
                  {/* When a room has been joined the room name will display  */}
-                {this.state.joined ? <h1> My Room: {this.state.room}</h1> : null}
+                {this.state.joined ? 
+                <div>
+                    <h1> My Room: {this.state.room}</h1> 
+                    <h1> Number of Players Ready: {this.state.numberOfPlayersReady}</h1>
+                </div>: null}
 
 
                 {/* When a room has been joined then the player can ready up. After all players are ready, cards can be displayed */}
                 {this.state.joinPressed === false ? 
                 <div>
-                    <input value={this.state.room} onChange={e => {
-                        this.setState({
-                            room: e.target.value
-                        })
-                    }} />
+                    <input value={this.state.room} onChange={e => this.setState({room: e.target.value})} />
                     <button onClick={this.joinRoom}>Join</button>
                 </div>:
                     // Checks if all players including self has indicated they are ready to play
@@ -279,8 +376,14 @@ class GamePlay extends Component {
                             <button onClick={() => this.check()}>Check</button>
                             <input 
                                 type='number'
-                                onChange={(e) => this.setState({betAmount: e.target.value})}/>
-                            <button onClick={() => this.setPreflopBetting()}>Bet</button>
+                                onChange={(e) => this.setState({
+                                    betAmount: e.target.value
+                                })}/>
+                            <button onClick={() => this.setPreflopBetting()}>Bet/Raise</button>
+                            {/* Display messages for edge cases of not having enough money for certain actions */}
+                            {this.state.canCall ? null : <p>You do not have enough money to call. You will need to either fold or bet all of your money</p>}
+                            {this.state.enoughMoney ? null : <p>Sorry, this bet is not allowed</p>}
+                            {this.state.betAllowed ? null : <p>All bets must be at least 50, in increments of 25, and be at least double the last bet.</p>}
                         </div> : 
                         // Checks if it is players turn to bet and if they cannot check
                         this.state.betTurn ? 
@@ -289,8 +392,13 @@ class GamePlay extends Component {
                             <button onClick={() => this.callBet()}>Call</button>
                             <input 
                                 type='number'
-                                onChange={(e) => this.setState({betAmount: e.target.value})}/>
-                            <button onClick={() => this.setPreflopBetting()}>Bet</button>
+                                onChange={(e) => this.setState({
+                                    betAmount: e.target.value
+                                })}/>
+                            <button onClick={() => this.setPreflopBetting()}>Bet/Raise</button>
+                            {this.state.canCall ? null : <p>You do not have enough money to call. You will need to either fold or bet all of your money</p>}
+                            {this.state.enoughMoney ? null : <p>Sorry, this bet is not allowed</p>}
+                            {this.state.betAllowed ? null : <p>All bets must be at least 50, in increments of 25, and be at least double the last bet.</p>}
                         </div>: null}
                     {mappedOtherPlayers}
                     </div> :

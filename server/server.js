@@ -31,6 +31,7 @@ app.get('/api/leaderboard', controller.getLeaderboard);
 
 let players = [];
 let playersInHand = [];
+let prePlayersReady = 0;
 let playersReady = 0;
 let pokerId = 1;
 let pokerIdTurn = 3;
@@ -42,6 +43,7 @@ let turnRevealed = false;
 let riverRevealed = false;
 let turnsTaken = 0;
 let potTotal = 75;
+let playersFolded = 0;
 
 
 // Sockets
@@ -56,7 +58,8 @@ io.on('connection', socket => {
     socket.on('join room', data => {
         console.log('Room joined', data.room)
         socket.join(data.room)
-        io.to(data.room).emit('room joined');
+        prePlayersReady++
+        io.to(data.room).emit('room joined', prePlayersReady);
     })
 
     socket.on('join game', data => {
@@ -64,6 +67,7 @@ io.on('connection', socket => {
         pokerId++
         data.betTurn = false
         players.push(data)
+        
     })
 
     socket.on('ready', data => {
@@ -141,6 +145,11 @@ io.on('connection', socket => {
                 preflopBetting(data)
             }  
 
+            // If player doesn't have any money but they still have cards then data is sent to update the frontend and keep the cycle flowing without having the player take a turn
+            else if (pokerIdTurn === playersInHand[i].pokerId && playersInHand[i].startMoney === 0) {
+                io.to(data.room).emit('no money left', {playersInHand, potTotal})
+            }
+
             // If the player has cards and their pokerId matches the turnId then it sets their turn to true
             else if (pokerIdTurn === playersInHand[i].pokerId) {
                 playersInHand[i].betTurn = true
@@ -164,8 +173,12 @@ io.on('connection', socket => {
                 let changeInBet = newBet - originalBet;
                 potTotal += changeInBet
                 }
-
+                
                 playersInHand.splice(i, 1, data.player[0])
+            }
+
+            if (data.player[0].id === playersInHand[i].id && data.players[0].cards.length === 0) {
+                playersFolded++
             }
         }
         
@@ -184,17 +197,21 @@ io.on('connection', socket => {
         })[0]
         
         function checkBets (player) {
-            return player.bet === highestBet.bet
+            return player.bet === highestBet.bet || player.startMoney === 0
         }
-        // Checks if all players with cards have equal bets, if not keep running betting
+        // Checks if all players with cards have equal bets or if they are out of money, if not keep running betting
         // Also checks how many turns have been taken and which round of betting has commenced
-        if (playersWithCards.every(checkBets) && riverRevealed && turnsTaken >= playersWithCards.length) {
+        if (playersWithCards.every(checkBets) && riverRevealed && turnsTaken >= playersWithCards.length + playersFolded) {
+            playersFolded = 0
             console.log('ready to evaluate hands')
-        } else if (playersWithCards.every(checkBets) && turnRevealed && turnsTaken >= playersWithCards.length) {
+        } else if (playersWithCards.every(checkBets) && turnRevealed && turnsTaken >= playersWithCards.length + playersFolded) {
+            playersFolded = 0
             io.to(data.room).emit('river', river)
-        } else if (playersWithCards.every(checkBets) && flopRevealed && turnsTaken >= playersWithCards.length) {
+        } else if (playersWithCards.every(checkBets) && flopRevealed && turnsTaken >= playersWithCards.length + playersFolded) {
+            playersFolded = 0
             io.to(data.room).emit('turn', turn)
-        } else if (playersWithCards.every(checkBets) && turnsTaken >= playersWithCards.length){
+        } else if (playersWithCards.every(checkBets) && turnsTaken >= playersWithCards.length + playersFolded){
+            playersFolded = 0
             io.to(data.room).emit('flop', flop)
         } else {
             preflopBetting(data);
