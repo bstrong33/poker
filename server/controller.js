@@ -14,6 +14,7 @@ module.exports = {
             let hash = bcrypt.hashSync(password, salt)
             let createdPlayer = await db.create_player([username, hash]);
             req.session.user = { username: createdPlayer[0].username, id: createdPlayer[0].id }
+            let stats = await db.create_player_stats([createdPlayer[0].id])
             res.status(200).send({
                 loggedIn: true, message: 'Register successful', username: createdPlayer[0].username, id: createdPlayer[0].id
             })
@@ -46,6 +47,37 @@ module.exports = {
         db.get_leaderboard()
         .then( leaders => res.status(200).send(leaders))
         .catch ( error => {
+            res.status(500).send('500 Error')
+            console.log(error)
+        })
+    },
+    updateStats: (req, res) => {
+        let {moneyMade, id} = req.body;
+        const db = req.app.get('db');
+        console.log('updated stats', moneyMade, id)
+        if (moneyMade >= 0) {
+            db.update_stats_add([id, moneyMade])
+            .then( () => {res.sendStatus(200)})
+            .catch( error => {
+                res.status(500).send('500 Error')
+                console.log(error)
+            })
+        } else if (moneyMade < 0) {
+            let absolute = Math.abs(moneyMade);
+            db.update_stats_subtract([id, absolute])
+            .then( () => {res.sendStatus(200)})
+            .catch( error => {
+                res.status(500).send('500 Error')
+                console.log(error)
+            })
+        }
+    },
+    deleteAccount: (req, res) => {
+        const deleteId = req.params.id;
+        const db = req.app.get('db');
+
+        db.delete_account([deleteId])
+        .catch( error => {
             res.status(500).send('500 Error')
             console.log(error)
         })

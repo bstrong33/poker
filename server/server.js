@@ -5,6 +5,8 @@ const session = require('express-session');
 const controller = require('./controller');
 const socket = require('socket.io');
 const {decks} = require('cards');
+const _ = require('lodash');
+const {evaluateCards} = require('phe');
 
 let { SERVER_PORT, CONNECTION_STRING, SESSION_SECRET } = process.env
 
@@ -25,6 +27,8 @@ massive(CONNECTION_STRING).then( db => {
 app.post('/auth/register', controller.register);
 app.post('/auth/login', controller.login);
 app.get('/api/leaderboard', controller.getLeaderboard);
+app.put('/api/updateStats', controller.updateStats);
+app.delete('/api/delete/:id', controller.deleteAccount);
 
 
 // GamePlay Data for Sockets
@@ -44,6 +48,7 @@ let riverRevealed = false;
 let turnsTaken = 0;
 let potTotal = 75;
 let playersFolded = 0;
+let reshuffle = true;
 
 
 // Sockets
@@ -94,7 +99,7 @@ io.on('connection', socket => {
             return cardArr
         }
 
-        let playersWithCards = []
+        playersInHand = []
 
         for (let i = 0; i < players.length; i++) {
             let cards = deck.draw(2)
@@ -110,8 +115,9 @@ io.on('connection', socket => {
                 players[i].bet = 0
             }
             playersInHand.push(players[i])
-            playersWithCards.push(players[i])
+    
         }
+        // console.log(playersInHand);
 
         // Deal Board
         let dealtFlop = deck.draw(3)
@@ -128,7 +134,7 @@ io.on('connection', socket => {
         turn.splice(0, 1, sortedTurn)
         river.splice(0, 1, sortedRiver)
 
-        io.to(data.room).emit('dealt out', playersWithCards)
+        io.to(data.room).emit('dealt out', playersInHand)
         preflopBetting(data)
     }
 
@@ -159,6 +165,63 @@ io.on('connection', socket => {
         }
     }
 
+    // First sets each player at an equal score, then evaluates the score of each player that still has cards and will return the winner
+    function evaluateHands(data) {
+        for (let i = 0; i < playersInHand.length; i++) {
+            playersInHand[i].score = 10000
+        }
+
+        for (let i = 0; i < playersInHand.length; i++) {
+            if(playersInHand[i].cards !== 0) {
+                let bAndH = [];
+                bAndH.push(flop, turn, river, playersInHand[i].cards)
+                let boardAndHand = _.flattenDeep(bAndH)
+                let score = evaluateCards(boardAndHand)
+                playersInHand[i].score = score;
+            }
+        }
+
+        // After giving each player a score, each player will be checked to see who has the lowest score
+        let playersToCheckScore = [...playersInHand]
+        let rankedScores = playersToCheckScore.sort( (a, b) => {
+            return a.score - b.score
+        })
+
+        // Creating a winners array to check if there are multiple winners and how many ways the pot needs to be split
+        let winners = [];
+
+        for (let i = 0; i < rankedScores.length; i++) {
+            if (rankedScores[i].score === rankedScores[0].score) {
+                winners.push(rankedScores[i])
+            }
+        }
+
+        let winnings = potTotal / winners.length
+
+        // loop through each player in playersInHand and compare it against each winner to see if there are matching id's. If so then add the winnings to their money
+        for (let i = 0; i < playersInHand.length; i++) {
+            for (let k = 0; k < winners.length; k++) {
+                if (playersInHand[i].id === winners[k].id) {
+                    playersInHand[i].startMoney += winnings
+                    console.log(playersInHand[i])
+                }
+            }
+        }
+
+        // Update the players array with the correct money amount for each player from the playersInHand array before sending the winnder
+        for (let i = 0; i < players.length; i++) {
+            players[i].startMoney = playersInHand[i].startMoney
+        }
+
+        let winnerNames = []
+
+        for (let i = 0; i < winners.length; i++) {
+            winnerNames.push(winners[i].username)
+        }
+
+        io.to(data.room).emit('winners', {winnerNames, potTotal})
+    }
+
     socket.on('turn of preflop betting', data => {
         // console.log(data)
         pokerIdTurn++
@@ -177,7 +240,7 @@ io.on('connection', socket => {
                 playersInHand.splice(i, 1, data.player[0])
             }
 
-            if (data.player[0].id === playersInHand[i].id && data.players[0].cards.length === 0) {
+            if (data.player[0].id === playersInHand[i].id && data.player[0].cards.length === 0) {
                 playersFolded++
             }
         }
@@ -204,6 +267,7 @@ io.on('connection', socket => {
         if (playersWithCards.every(checkBets) && riverRevealed && turnsTaken >= playersWithCards.length + playersFolded) {
             playersFolded = 0
             console.log('ready to evaluate hands')
+            evaluateHands(data)
         } else if (playersWithCards.every(checkBets) && turnRevealed && turnsTaken >= playersWithCards.length + playersFolded) {
             playersFolded = 0
             io.to(data.room).emit('river', river)
@@ -256,44 +320,54 @@ io.on('connection', socket => {
         preflopBetting(data)
     })
 
+    // start the next hand
+    socket.on('start next hand', data => {
+            pokerIdTurn = 3;
+            flop = [[]];
+            turn = [[]];
+            river = [[]];
+            flopRevealed = false;
+            turnRevealed = false;
+            riverRevealed = false;
+            turnsTaken = 0;
+            potTotal = 75;
+            playersFolded = 0;
+            reshuffle = false;
+
+            // Checks to make sure the first person in the array didn't leave the game. If they are still there this will move them to the end of the array.
+            if (players[0].pokerId === 1) {
+                let dealer = players.shift();
+                players.push(dealer)
+            }
+            
+            players.forEach((player, i, arr) => {
+                arr[i].pokerId = i + 1
+                arr[i].cards = []
+                arr[i].bet = 0
+                arr[i].betTurn = false
+            })
+            console.log('ready to shuffle', players)
+        
+        shuffleAndDeal(players, data)
+    })
+
+    socket.on('leave game', data => {
+        console.log('before leaving', players)
+        for (let i = 0; i < players.length; i++) {
+            if (data.id === players[i].id) {
+                players.splice(i, 1)
+                console.log('player deleted', i)
+            }
+        }
+        console.log('player left', players)
+        console.log('Left Room', data.room)
+        socket.leave(data.room)
+    })
+
 
 
     socket.on('disconnect', () => {
         console.log('User disconneted')
     })
 })
-
-// Preflop - Dealing
-
-// class Dealing {
-//     constructor(){
-
-//     }
-
-//     shuffleAndDeal(players, cb) {
-//         const deck = new decks.StandardDeck({jokers: 0})
-//         deck.shuffleAll();
-
-//         function deSorter(cards) {
-//             let cardArr = []
-//             for (let i = 0; i < cards.length; i++) {
-//                 let suit = cards[i].suit.name[0]
-//                 let rank = cards[i].rank.shortName
-//                 let card = rank + suit
-//                 cardArr.push(card)
-//             }
-//             return cardArr
-//         }
-
-//         for (let i = 0; i < players.length; i++) {
-//             let cards = deck.draw(2)
-//             let sortedCards = deSorter(cards)
-//             players[i].cards = sortedCards
-//             playersInHand.push(player[i])
-//         }
-//         socket.emit('deal', playersInHand)
-//     }
-// }
-
-
 

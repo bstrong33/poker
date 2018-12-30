@@ -2,8 +2,10 @@ import React, { Component } from 'react';
 import Leaderboard from './Leaderboard';
 import AddMoney from './AddMoney';
 import JoinGame from './JoinGame';
+import { Link } from 'react-router-dom';
 
-class HomePage extends Component {
+class HomePage extends Component { 
+
     render() {
         return (
             <div className='homepage-background'>
@@ -12,6 +14,10 @@ class HomePage extends Component {
                     <Leaderboard />
                 </div>
                 <div className='money-and-game'>
+                    <div className='view-account'>
+                        <h2>View Account</h2>
+                        <Link to='/personal'><button>View</button></Link>
+                    </div>
                     <div className='add-money'>
                         <AddMoney />
                     </div>

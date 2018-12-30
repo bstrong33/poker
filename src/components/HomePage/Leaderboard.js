@@ -41,44 +41,44 @@ class Leaderboard extends Component {
                 {/* {mappedLeaderboard} */}
                 <span>{leaderboard[0].username}</span>
                 <span>{leaderboard[0].games_played}</span>
-                <span>${leaderboard[0].money_won}</span>
-                <span>${leaderboard[0].money_per_game}</span>
+                <span>{leaderboard[0].money_won}</span>
+                <span>{leaderboard[0].money_per_game}</span>
                 <span>{leaderboard[1].username}</span>
                 <span>{leaderboard[1].games_played}</span>
-                <span>${leaderboard[1].money_won}</span>
-                <span>${leaderboard[1].money_per_game}</span>
+                <span>{leaderboard[1].money_won}</span>
+                <span>{leaderboard[1].money_per_game}</span>
                 <span>{leaderboard[2].username}</span>
                 <span>{leaderboard[2].games_played}</span>
-                <span>${leaderboard[2].money_won}</span>
-                <span>${leaderboard[2].money_per_game}</span>
+                <span>{leaderboard[2].money_won}</span>
+                <span>{leaderboard[2].money_per_game}</span>
                 <span>{leaderboard[3].username}</span>
                 <span>{leaderboard[3].games_played}</span>
-                <span>${leaderboard[3].money_won}</span>
-                <span>${leaderboard[3].money_per_game}</span>
+                <span>{leaderboard[3].money_won}</span>
+                <span>{leaderboard[3].money_per_game}</span>
                 <span>{leaderboard[4].username}</span>
                 <span>{leaderboard[4].games_played}</span>
-                <span>${leaderboard[4].money_won}</span>
-                <span>${leaderboard[4].money_per_game}</span>
+                <span>{leaderboard[4].money_won}</span>
+                <span>{leaderboard[4].money_per_game}</span>
                 <span>{leaderboard[5].username}</span>
                 <span>{leaderboard[5].games_played}</span>
-                <span>${leaderboard[5].money_won}</span>
-                <span>${leaderboard[5].money_per_game}</span>
+                <span>{leaderboard[5].money_won}</span>
+                <span>{leaderboard[5].money_per_game}</span>
                 <span>{leaderboard[6].username}</span>
                 <span>{leaderboard[6].games_played}</span>
-                <span>${leaderboard[6].money_won}</span>
-                <span>${leaderboard[6].money_per_game}</span>
+                <span>{leaderboard[6].money_won}</span>
+                <span>{leaderboard[6].money_per_game}</span>
                 <span>{leaderboard[7].username}</span>
                 <span>{leaderboard[7].games_played}</span>
-                <span>${leaderboard[7].money_won}</span>
-                <span>${leaderboard[7].money_per_game}</span>
+                <span>{leaderboard[7].money_won}</span>
+                <span>{leaderboard[7].money_per_game}</span>
                 <span>{leaderboard[8].username}</span>
                 <span>{leaderboard[8].games_played}</span>
-                <span>${leaderboard[8].money_won}</span>
-                <span>${leaderboard[8].money_per_game}</span>
+                <span>{leaderboard[8].money_won}</span>
+                <span>{leaderboard[8].money_per_game}</span>
                 <span>{leaderboard[9].username}</span>
                 <span>{leaderboard[9].games_played}</span>
-                <span>${leaderboard[9].money_won}</span>
-                <span>${leaderboard[9].money_per_game}</span>
+                <span>{leaderboard[9].money_won}</span>
+                <span>{leaderboard[9].money_per_game}</span>
             </div>
         );
     }

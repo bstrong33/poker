@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
+import axios from 'axios';
 import io from 'socket.io-client';
+
 
 class GamePlay extends Component {
     constructor(props) {
@@ -24,6 +27,7 @@ class GamePlay extends Component {
             flop: null,
             turn: null,
             river: null,
+            winnerNames: null,
             potTotal: 75,
         }
     }
@@ -43,6 +47,7 @@ class GamePlay extends Component {
         this.socket.on('flop', this.setFlop)
         this.socket.on('turn', this.setTurn)
         this.socket.on('river', this.setRiver)
+        this.socket.on('winners', this.displayWinners)
     }
 
     // Creating room
@@ -176,10 +181,11 @@ class GamePlay extends Component {
                     betTurn: false,
                     player,
                     betAllowed: true,
-                    enoughMoney: true
+                    enoughMoney: true,
+                    canCall: true
                 }, () => this.displayPreflopBetting())
             } else {
-                this.setState({enoughMoney: false})
+                this.setState({enoughMoney: false, canCall: true})
             }
         } else if (player[0].startMoney < 50) {
             if (betAmount !== 25) {
@@ -266,7 +272,7 @@ class GamePlay extends Component {
         let player = [...this.state.player];
         let { bet } = player[0];
 
-        if (player[0].startMoney >= highestBet.bet) {
+        if (player[0].startMoney + player[0].bet >= highestBet.bet) {
             // startMoney only changes by the amount being called while still displaying the total amount of money bet
             let callAmount = highestBet.bet - bet
             player[0].bet = highestBet.bet
@@ -331,13 +337,60 @@ class GamePlay extends Component {
         this.setState({river}, () => this.displayRiverBetting())
     }
 
+    displayWinners = data => {
+        let {winnerNames, potTotal} = data
+        console.log(winnerNames)
+        this.setState({winnerNames, potTotal}, () => this.viewingWinners())
+    }
+
+    viewingWinners = () => {
+        setTimeout(() => {
+            this.setState({
+                winnerNames: null,
+                potTotal: 75,
+                flop: null,
+                turn: null,
+                river: null,
+                joined: false
+            }, () => this.startNextHand())
+        }, 30000)
+    }
+
+    startNextHand = () => {
+        console.log(this.state.player)
+        if (this.state.player[0].pokerId === 2) {
+            console.log('ran');
+            this.socket.emit('start next hand', {
+                room: this.state.room
+            })
+        }
+    }
+
+    leaveGame = () => {
+        let {initialMoney} = this.props
+        let {player} = this.state
+
+        let moneyMade = player[0].startMoney - initialMoney
+
+        axios.put('/api/updateStats', {
+            moneyMade,
+            id: this.props.id
+        })
+
+        this.socket.emit('leave game', {
+            room: this.state.room,
+            id: this.props.id
+        })
+    }
+
     render() {
         let mappedOtherPlayers = this.state.otherPlayers.map(player => {
             return (
                 <div key='player.id'>
                     <p>Username: {player.username}</p>
                     <p>Money: {player.startMoney}</p>
-                    <p>{['blank ', 'blank']}</p>
+                    {this.state.winnerNames ? <p>{player.cards}</p> : 
+                    <p>{['blank ', 'blank']}</p>}
                     <p>Bet: {player.bet}</p>
                 </div>
             )
@@ -351,6 +404,9 @@ class GamePlay extends Component {
                     <h1> Number of Players Ready: {this.state.numberOfPlayersReady}</h1>
                 </div>: null}
 
+
+                {/* Display the winner for everyone to see */}
+                {this.state.winnerNames ? <h1>Winner: {this.state.winnerNames}</h1> : null}
 
                 {/* When a room has been joined then the player can ready up. After all players are ready, cards can be displayed */}
                 {this.state.joinPressed === false ? 
@@ -379,7 +435,7 @@ class GamePlay extends Component {
                                 onChange={(e) => this.setState({
                                     betAmount: e.target.value
                                 })}/>
-                            <button onClick={() => this.setPreflopBetting()}>Bet/Raise</button>
+                            <button onClick={() => this.setPreflopBetting()}>Bet</button>
                             {/* Display messages for edge cases of not having enough money for certain actions */}
                             {this.state.canCall ? null : <p>You do not have enough money to call. You will need to either fold or bet all of your money</p>}
                             {this.state.enoughMoney ? null : <p>Sorry, this bet is not allowed</p>}
@@ -395,7 +451,7 @@ class GamePlay extends Component {
                                 onChange={(e) => this.setState({
                                     betAmount: e.target.value
                                 })}/>
-                            <button onClick={() => this.setPreflopBetting()}>Bet/Raise</button>
+                            <button onClick={() => this.setPreflopBetting()}>Raise</button>
                             {this.state.canCall ? null : <p>You do not have enough money to call. You will need to either fold or bet all of your money</p>}
                             {this.state.enoughMoney ? null : <p>Sorry, this bet is not allowed</p>}
                             {this.state.betAllowed ? null : <p>All bets must be at least 50, in increments of 25, and be at least double the last bet.</p>}
@@ -410,6 +466,17 @@ class GamePlay extends Component {
                 {this.state.turn ? <p>TURN: {this.state.turn}</p>: null}
                 {/* Display river once it has been sent to the frontend */}
                 {this.state.river ? <p>RIVER: {this.state.river}</p>: null}
+
+                {this.state.winnerNames && this.state.player[0].pokerId !== 2 ? 
+                <div>
+                    <h2>You may leave the game</h2>
+                    <Link to='/homepage'>
+                        <button
+                        onClick={() => this.leaveGame()}
+                        >Leave Game</button>
+                    </Link>
+                </div>
+                : null}
 
                 
             </div>

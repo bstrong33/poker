@@ -110,6 +110,21 @@ h2 {
   height: 80vh;
 }
 
+.view-account {
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 5%;
+  color:white;
+  width: 32vw;
+  height: 15vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.view-account h2 {
+  margin-bottom: 18px;
+}
+
 .add-money {
   background: rgba(0, 0, 0, 0.8);
   border-radius: 5%;
@@ -140,6 +155,20 @@ h2 {
 
 .join-game h2 {
   margin-bottom: 18px;
+}
+
+.join-game button {
+  margin-bottom: 5px;
+}
+
+.personal-background {
+  height: 100vh;
+  width: 100vw;
+  background-image: url('https://www.bellagio.com/content/dam/MGM/bellagio/nightlife/hyde/architecture/bellagio-hyde-lounge-dancing-fountains.tif');
+  background-size: cover;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
 }
 
 
