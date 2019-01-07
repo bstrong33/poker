@@ -3,6 +3,58 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import io from 'socket.io-client';
+import Twoc from './CardImages/2c.png';
+import Twod from './CardImages/2d.png';
+import Twoh from './CardImages/2h.png';
+import Twos from './CardImages/2s.png';
+import Threec from './CardImages/3c.png';
+import Threed from './CardImages/3d.png';
+import Threeh from './CardImages/3h.png';
+import Threes from './CardImages/3s.png';
+import Fourc from './CardImages/4c.png';
+import Fourd from './CardImages/4d.png';
+import Fourh from './CardImages/4h.png';
+import Fours from './CardImages/4s.png';
+import Fivec from './CardImages/5c.png';
+import Fived from './CardImages/5d.png';
+import Fiveh from './CardImages/5h.png';
+import Fives from './CardImages/5s.png';
+import Sixc from './CardImages/6c.png';
+import Sixd from './CardImages/6d.png';
+import Sixh from './CardImages/6h.png';
+import Sixs from './CardImages/6s.png';
+import Sevenc from './CardImages/7c.png';
+import Sevend from './CardImages/7d.png';
+import Sevenh from './CardImages/7h.png';
+import Sevens from './CardImages/7s.png';
+import Eightc from './CardImages/8c.png';
+import Eightd from './CardImages/8d.png';
+import Eighth from './CardImages/8h.png';
+import Eights from './CardImages/8s.png';
+import Ninec from './CardImages/9c.png';
+import Nined from './CardImages/9d.png';
+import Nineh from './CardImages/9h.png';
+import Nines from './CardImages/9s.png';
+import Tenc from './CardImages/10c.png';
+import Tend from './CardImages/10d.png';
+import Tenh from './CardImages/10h.png';
+import Tens from './CardImages/10s.png';
+import Jackc from './CardImages/Jc.png';
+import Jackd from './CardImages/Jd.png';
+import Jackh from './CardImages/Jh.png';
+import Jacks from './CardImages/Js.png';
+import Queenc from './CardImages/Qc.png';
+import Queend from './CardImages/Qd.png';
+import Queenh from './CardImages/Qh.png';
+import Queens from './CardImages/Qs.png';
+import Kingc from './CardImages/Kc.png';
+import Kingd from './CardImages/Kd.png';
+import Kingh from './CardImages/Kh.png';
+import Kings from './CardImages/Ks.png';
+import Acec from './CardImages/Ac.png';
+import Aced from './CardImages/Ad.png';
+import Aceh from './CardImages/Ah.png';
+import Aces from './CardImages/As.png';
 
 
 class GamePlay extends Component {
@@ -13,6 +65,7 @@ class GamePlay extends Component {
             ready: false,
             player: [],
             otherPlayers: [],
+            allPlayers: [],
             room: '',
             joined: false,
             joinPressed: false,
@@ -29,6 +82,7 @@ class GamePlay extends Component {
             river: null,
             winnerNames: null,
             potTotal: 75,
+            cards: [{ image: Twoc, name: 'Twoc'}, { image: Twod, name: 'Twod'}, { image: Twoh, name: 'Twoh'}, { image: Twos, name: 'Twos'}, { image: Threec, name: 'Threec'}, { image: Threed, name: 'Threed'}, { image: Threeh, name: 'Threeh'}, { image: Threes, name: 'Threes'}, { image: Fourc, name: 'Fourc'}, { image: Fourd, name: 'Fourd'}, { image: Fourh, name: 'Fourh'}, { image: Fours, name: 'Fours'}, { image: Fivec, name: 'Fivec'}, { image: Fived, name: 'Fived'}, { image: Fiveh, name: 'Fiveh'}, { image: Fives, name: 'Fives'}, { image: Sixc, name: 'Sixc'}, { image: Sixd, name: 'Sixd'}, { image: Sixh, name: 'Sixh'}, { image: Sixs, name: 'Sixs'}, { image: Sevenc, name: 'Sevenc'}, { image: Sevend, name: 'Sevend'}, { image: Sevenh, name: 'Sevenh'}, { image: Sevens, name: 'Sevens'}, { image: Eightc, name: 'Eightc'}, { image: Eightd, name: 'Eightd'}, { image: Eighth, name: 'Eighth'}, { image: Eights, name: 'Eights'}, { image: Ninec, name: 'Ninec'}, { image: Nined, name: 'Nined'}, { image: Nineh, name: 'Nineh'}, { image: Nines, name: 'Nines'}, { image: Tenc, name: 'Tenc'}, { image: Tend, name: 'Tend'}, { image: Tenh, name: 'Tenh'}, { image: Tens, name: 'Tens'}, { image: Jackc, name: 'Jackc'}, { image: Jackd, name: 'Jackd'}, { image: Jackh, name: 'Jackh'}, { image: Jacks, name: 'Jacks'}, { image: Queenc, name: 'Queenc'}, { image: Queend, name: 'Queend'}, { image: Queenh, name: 'Queenh'}, { image: Queens, name: 'Queens'}, { image: Kingc, name: 'Kingc'}, { image: Kingd, name: 'Kingd'}, { image: Kingh, name: 'Kingh'}, { image: Kings, name: 'Kings'}, { image: Acec, name: 'Acec'}, { image: Aced, name: 'Aced'}, { image: Aceh, name: 'Aceh'}, { image: Aces, name: 'Aces'}]
         }
     }
     
@@ -80,8 +134,9 @@ class GamePlay extends Component {
     // recieiving cards from server and setting state to be able to display these cards
     viewCards = players => {
         let otherPlayers = []
+        let {id} = this.props
         for (let i = 0; i < players.length; i++) {
-            if (players[i].id === this.props.id) {
+            if (players[i].id === id) {
                 const updatedPlayerHand = []
                 updatedPlayerHand.push(players[i])
                 this.setState({player: updatedPlayerHand})
@@ -90,12 +145,23 @@ class GamePlay extends Component {
                 otherPlayers.push(players[i])
             }
         }
-        this.setState({otherPlayers, allPlayersJoined: true})
+
+        let allPlayers = [...players]
+        reArrangeOrder(allPlayers)
+        function reArrangeOrder(allPlayers) {
+            if (allPlayers[0].id !== id) {
+                let first = allPlayers.shift()
+                allPlayers.push(first)
+                reArrangeOrder(allPlayers)
+            } 
+        }
+        this.setState({otherPlayers, allPlayersJoined: true, joined: false, allPlayers})
     }
 
     // Preflop Betting
     allowPreflopBetting = data => {
         let { playersInHand, potTotal } = data
+        let {id} = this.props
         let otherPlayers = []
         for (let i = 0; i < playersInHand.length; i++) {
             // if it is the players turn to bet (sent from server), then betTurn will be true which triggers a ternary in the render
@@ -132,12 +198,22 @@ class GamePlay extends Component {
                 otherPlayers.push(playersInHand[i])
             }
         }
-        this.setState({otherPlayers, potTotal})
+        let allPlayers = [...playersInHand]
+        reArrangeOrder(allPlayers)
+        function reArrangeOrder(allPlayers) {
+            if (allPlayers[0].id !== id) {
+                let first = allPlayers.shift()
+                allPlayers.push(first)
+                reArrangeOrder(allPlayers)
+            } 
+        }
+        this.setState({otherPlayers, potTotal, allPlayers})
     }
 
     // This function will fire if the player has no money in order to update the screen but bypass needing to have the player take a turn
     noMoneyLeft = data => {
         let { playersInHand, potTotal } = data
+        let {id} = this.props
         let otherPlayers = []
 
         for (let i = 0; i < playersInHand.length; i++) {
@@ -153,7 +229,16 @@ class GamePlay extends Component {
                 otherPlayers.push(playersInHand[i])
             }
         }
-        this.setState({otherPlayers, potTotal}, 
+        let allPlayers = [...playersInHand]
+        reArrangeOrder(allPlayers)
+        function reArrangeOrder(allPlayers) {
+            if (allPlayers[0].id !== id) {
+                let first = allPlayers.shift()
+                allPlayers.push(first)
+                reArrangeOrder(allPlayers)
+            } 
+        }
+        this.setState({otherPlayers, potTotal, allPlayers},
             () => this.displayPreflopBetting())
     }
 
@@ -383,20 +468,106 @@ class GamePlay extends Component {
         })
     }
 
+
     render() {
-        let mappedOtherPlayers = this.state.otherPlayers.map(player => {
+
+         // Each player will be looped over and run through this function in order to display their cards
+        let showCards = (player) => {
+            let {cards} = this.state
+            let cardOne = null
+            let cardTwo = null
+            for (let i = 0; i < cards.length; i++) {
+                if (player.cards[1] === cards[i].name) {
+                    cardOne = <img src={cards[i].image} alt='player card 1' />
+                }
+                if (player.cards[3] === cards[i].name) {
+                    cardTwo = <img src ={cards[i].image} alt='player card 2' />
+                }
+            }
+                    if (cardOne !== null && cardTwo !== null) {
+                        return (
+                            <div className='cards'>
+                                {cardOne}
+                                {cardTwo}
+                            </div>
+                        )
+                    }
+        }
+
+        let mappedPlayers = this.state.allPlayers.map((player, i) => {
+            let cards = showCards(player)
             return (
                 <div key='player.id'>
-                    <p>Username: {player.username}</p>
-                    <p>Money: {player.startMoney}</p>
-                    {this.state.winnerNames ? <p>{player.cards}</p> : 
-                    <p>{['blank ', 'blank']}</p>}
-                    <p>Bet: {player.bet}</p>
+                    {i === 0 ?
+                    <div className={`seat${i}`}>
+                        {cards}
+                        <p>{player.username}: ${player.startMoney}</p>
+                        <p>Bet: ${player.bet}</p>
+                    </div>:
+                    <div className={`seat${i}`}>
+                        {this.state.winnerNames ? 
+                        <div>
+                            {cards} 
+                        </div>: 
+                        player.cards.length !== 0 ?
+                        <div className='cards'>
+                            <img src='https://cdn.shopify.com/s/files/1/0200/7616/products/playing-cards-superior-classic-back-1_1024x1024.png?v=1530155531' alt='card back' />
+                            <img src='https://cdn.shopify.com/s/files/1/0200/7616/products/playing-cards-superior-classic-back-1_1024x1024.png?v=1530155531' alt='card back' />
+                        </div> : null}
+                        <p>{player.username}: ${player.startMoney}</p>
+                        <p>Bet: ${player.bet}</p>
+                    </div>}
                 </div>
             )
         })
+
+        // When the flop is sent from the backend, this function will be fired to display the flop images
+        let displayFlopImages = (flop) => {
+            let {cards} = this.state
+            let cardOne = null
+            let cardTwo = null
+            let cardThree = null
+            for (let i = 0; i < cards.length; i++) {
+                if (flop[0][1] === cards[i].name) {
+                    cardOne = <img src={cards[i].image} alt='player card 1' /> 
+                }
+                if (flop[0][3] === cards[i].name) {
+                    cardTwo = <img src={cards[i].image} alt='player card 2' /> 
+                }
+                if (flop[0][5] === cards[i].name) {
+                    cardThree = <img src={cards[i].image} alt='player card 3' /> 
+                }
+            }
+            if (cardOne !== null && cardTwo !== null && cardThree !== null)
+                return (
+                    <div className='flop'>
+                        {cardOne}
+                        {cardTwo}
+                        {cardThree}
+                    </div>
+                )
+        }
+
+        let displayTurnAndRiver = (card) => {
+            let {cards} = this.state
+            let cardOne = null
+            for (let i = 0; i < cards.length; i++) {
+                if (card[0][1] === cards[i].name) {
+                    cardOne = <img src={cards[i].image} alt='player card 1' /> 
+                }
+            }
+            if (cardOne !== null) {
+                return (
+                    <div className='turn-river'>
+                        {cardOne}
+                    </div>
+                )
+            }
+        }
+        
+
         return (
-            <div>
+            <div className='whole-game-view'>
                  {/* When a room has been joined the room name will display  */}
                 {this.state.joined ? 
                 <div>
@@ -418,13 +589,11 @@ class GamePlay extends Component {
                     this.state.ready === false ?
                     <button onClick={() => this.readyToPlay()}>Ready</button> : 
                     this.state.allPlayersJoined ?
-                    <div>
+                    // This is where gameplay is displayed
+                    <div className='gameplay'>
                     {/* Displays pot total as it changes */}
                     <p>Pot Total: {this.state.potTotal}</p>
-                    <p>Username: {this.state.player[0].username}</p>
-                    <p>Money: {this.state.player[0].startMoney}</p>
-                    <p>Cards: {this.state.player[0].cards}</p>
-                    <p>Bet: {this.state.player[0].bet}</p>
+                    {mappedPlayers}
                     {/* PreFlop betting ternary, checks if it is players turn to bet and if they can check*/}
                         {this.state.betTurn && this.state.canCheck ?
                         <div>
@@ -456,16 +625,15 @@ class GamePlay extends Component {
                             {this.state.enoughMoney ? null : <p>Sorry, this bet is not allowed</p>}
                             {this.state.betAllowed ? null : <p>All bets must be at least 50, in increments of 25, and be at least double the last bet.</p>}
                         </div>: null}
-                    {mappedOtherPlayers}
                     </div> :
                     <p>Waiting on other players...</p>
                 }
                 {/* Display flop once it has been sent to the frontend */}
-                {this.state.flop ? <p>FLOP: {this.state.flop}</p>: null}
+                {this.state.flop ? displayFlopImages(this.state.flop) : null}
                 {/* Display turn once it has been sent to the frontend */}
-                {this.state.turn ? <p>TURN: {this.state.turn}</p>: null}
+                {this.state.turn ? displayTurnAndRiver(this.state.turn) : null}
                 {/* Display river once it has been sent to the frontend */}
-                {this.state.river ? <p>RIVER: {this.state.river}</p>: null}
+                {this.state.river ? displayTurnAndRiver(this.state.river) : null}
 
                 {this.state.winnerNames && this.state.player[0].pokerId !== 2 ? 
                 <div>
@@ -477,8 +645,6 @@ class GamePlay extends Component {
                     </Link>
                 </div>
                 : null}
-
-                
             </div>
         );
     }

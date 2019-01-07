@@ -93,8 +93,10 @@ io.on('connection', socket => {
             for (let i = 0; i < cards.length; i++) {
                 let suit = cards[i].suit.name[0]
                 let rank = cards[i].rank.shortName
+                let longName = cards[i].rank.longName
                 let card = rank + suit
-                cardArr.push(card)
+                let longCard = longName + suit
+                cardArr.push(card, longCard)
             }
             return cardArr
         }
@@ -117,7 +119,7 @@ io.on('connection', socket => {
             playersInHand.push(players[i])
     
         }
-        // console.log(playersInHand);
+        console.log(playersInHand);
 
         // Deal Board
         let dealtFlop = deck.draw(3)
@@ -172,9 +174,10 @@ io.on('connection', socket => {
         }
 
         for (let i = 0; i < playersInHand.length; i++) {
-            if(playersInHand[i].cards !== 0) {
+            if(playersInHand[i].cards.length !== 0) {
                 let bAndH = [];
-                bAndH.push(flop, turn, river, playersInHand[i].cards)
+                bAndH.push(flop[0][0], flop[0][2], flop[0][4], turn[0][0], river[0][0], playersInHand[i].cards[0], playersInHand[i].cards[2])
+                console.log(bAndH)
                 let boardAndHand = _.flattenDeep(bAndH)
                 let score = evaluateCards(boardAndHand)
                 playersInHand[i].score = score;

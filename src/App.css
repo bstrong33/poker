@@ -171,4 +171,112 @@ h2 {
   justify-content: space-around;
 }
 
+.whole-game-view {
+  height: 100vh;
+  width: 100vw;
+  background-image: url('https://wallpapercave.com/wp/wp2229438.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.gameplay {
+  height: 95vh;
+  width: 95vw;
+  background-image: url('http://www.outrageousfortunes.co.uk/wp-content/uploads/2015/05/poker-table-felt.jpg');
+  background-size: contain;
+  /* background-repeat: no-repeat; */
+  background-position: center;
+  border: 10px black solid;
+  border-radius: 50%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.cards {
+  height: 13vh;
+  width: auto;
+  display: flex;
+}
+
+.cards img {
+  max-height: 100%;
+}
+
+.flop {
+  height: 13vh;
+  width: auto;
+  display: flex;
+  position: absolute;
+}
+
+.flop img {
+  max-height: 100%;
+}
+
+.turn-river {
+  height: 13vh;
+  width: auto;
+  display: flex;
+}
+
+.turn-river img {
+  max-height: 100%;
+}
+
+.seat0 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  position: absolute;
+  top: 2%;
+  color: white;
+}
+
+.seat1 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  right: 20%;
+  top: 15%;
+  position: absolute;
+  color: white;
+}
+
+.seat2 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: absolute;
+  right: 2%;
+  top: 42%;
+  color: white;
+}
+
+.seat3 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: absolute;
+  right: 20%;
+  bottom: 15%;
+  color: white;
+}
+
+.seat4 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: absolute;
+  bottom: 2%;
+  color: white;
+}
+
+
+
 
