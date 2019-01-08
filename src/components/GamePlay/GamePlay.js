@@ -60,7 +60,7 @@ import Aces from './CardImages/As.png';
 class GamePlay extends Component {
     constructor(props) {
         super(props);
-        
+
         this.state = {
             ready: false,
             player: [],
@@ -82,19 +82,19 @@ class GamePlay extends Component {
             river: null,
             winnerNames: null,
             potTotal: 75,
-            cards: [{ image: Twoc, name: 'Twoc'}, { image: Twod, name: 'Twod'}, { image: Twoh, name: 'Twoh'}, { image: Twos, name: 'Twos'}, { image: Threec, name: 'Threec'}, { image: Threed, name: 'Threed'}, { image: Threeh, name: 'Threeh'}, { image: Threes, name: 'Threes'}, { image: Fourc, name: 'Fourc'}, { image: Fourd, name: 'Fourd'}, { image: Fourh, name: 'Fourh'}, { image: Fours, name: 'Fours'}, { image: Fivec, name: 'Fivec'}, { image: Fived, name: 'Fived'}, { image: Fiveh, name: 'Fiveh'}, { image: Fives, name: 'Fives'}, { image: Sixc, name: 'Sixc'}, { image: Sixd, name: 'Sixd'}, { image: Sixh, name: 'Sixh'}, { image: Sixs, name: 'Sixs'}, { image: Sevenc, name: 'Sevenc'}, { image: Sevend, name: 'Sevend'}, { image: Sevenh, name: 'Sevenh'}, { image: Sevens, name: 'Sevens'}, { image: Eightc, name: 'Eightc'}, { image: Eightd, name: 'Eightd'}, { image: Eighth, name: 'Eighth'}, { image: Eights, name: 'Eights'}, { image: Ninec, name: 'Ninec'}, { image: Nined, name: 'Nined'}, { image: Nineh, name: 'Nineh'}, { image: Nines, name: 'Nines'}, { image: Tenc, name: 'Tenc'}, { image: Tend, name: 'Tend'}, { image: Tenh, name: 'Tenh'}, { image: Tens, name: 'Tens'}, { image: Jackc, name: 'Jackc'}, { image: Jackd, name: 'Jackd'}, { image: Jackh, name: 'Jackh'}, { image: Jacks, name: 'Jacks'}, { image: Queenc, name: 'Queenc'}, { image: Queend, name: 'Queend'}, { image: Queenh, name: 'Queenh'}, { image: Queens, name: 'Queens'}, { image: Kingc, name: 'Kingc'}, { image: Kingd, name: 'Kingd'}, { image: Kingh, name: 'Kingh'}, { image: Kings, name: 'Kings'}, { image: Acec, name: 'Acec'}, { image: Aced, name: 'Aced'}, { image: Aceh, name: 'Aceh'}, { image: Aces, name: 'Aces'}]
+            cards: [{ image: Twoc, name: 'Twoc' }, { image: Twod, name: 'Twod' }, { image: Twoh, name: 'Twoh' }, { image: Twos, name: 'Twos' }, { image: Threec, name: 'Threec' }, { image: Threed, name: 'Threed' }, { image: Threeh, name: 'Threeh' }, { image: Threes, name: 'Threes' }, { image: Fourc, name: 'Fourc' }, { image: Fourd, name: 'Fourd' }, { image: Fourh, name: 'Fourh' }, { image: Fours, name: 'Fours' }, { image: Fivec, name: 'Fivec' }, { image: Fived, name: 'Fived' }, { image: Fiveh, name: 'Fiveh' }, { image: Fives, name: 'Fives' }, { image: Sixc, name: 'Sixc' }, { image: Sixd, name: 'Sixd' }, { image: Sixh, name: 'Sixh' }, { image: Sixs, name: 'Sixs' }, { image: Sevenc, name: 'Sevenc' }, { image: Sevend, name: 'Sevend' }, { image: Sevenh, name: 'Sevenh' }, { image: Sevens, name: 'Sevens' }, { image: Eightc, name: 'Eightc' }, { image: Eightd, name: 'Eightd' }, { image: Eighth, name: 'Eighth' }, { image: Eights, name: 'Eights' }, { image: Ninec, name: 'Ninec' }, { image: Nined, name: 'Nined' }, { image: Nineh, name: 'Nineh' }, { image: Nines, name: 'Nines' }, { image: Tenc, name: 'Tenc' }, { image: Tend, name: 'Tend' }, { image: Tenh, name: 'Tenh' }, { image: Tens, name: 'Tens' }, { image: Jackc, name: 'Jackc' }, { image: Jackd, name: 'Jackd' }, { image: Jackh, name: 'Jackh' }, { image: Jacks, name: 'Jacks' }, { image: Queenc, name: 'Queenc' }, { image: Queend, name: 'Queend' }, { image: Queenh, name: 'Queenh' }, { image: Queens, name: 'Queens' }, { image: Kingc, name: 'Kingc' }, { image: Kingd, name: 'Kingd' }, { image: Kingh, name: 'Kingh' }, { image: Kings, name: 'Kings' }, { image: Acec, name: 'Acec' }, { image: Aced, name: 'Aced' }, { image: Aceh, name: 'Aceh' }, { image: Aces, name: 'Aces' }]
         }
     }
-    
+
     // Initilizing socket connection, room, and dealing
     componentDidMount() {
-        let { username, id, initialMoney} = this.props
+        let { username, id, initialMoney } = this.props
         let startMoney = parseInt(initialMoney);
         this.socket = io();
         this.socket.on('room joined', data => {
             this.joinSuccess(data)
         })
-        this.socket.emit('join game', {username, id, startMoney})
+        this.socket.emit('join game', { username, id, startMoney })
         this.socket.on('dealt out', this.viewCards)
         this.socket.on('preflop betting', this.allowPreflopBetting)
         this.socket.on('no money left', this.noMoneyLeft)
@@ -128,19 +128,19 @@ class GamePlay extends Component {
         this.setState({
             ready: true
         })
-        this.socket.emit('ready', {room: this.state.room})
+        this.socket.emit('ready', { room: this.state.room })
     }
 
     // recieiving cards from server and setting state to be able to display these cards
     viewCards = players => {
         let otherPlayers = []
-        let {id} = this.props
+        let { id } = this.props
         for (let i = 0; i < players.length; i++) {
             if (players[i].id === id) {
                 const updatedPlayerHand = []
                 updatedPlayerHand.push(players[i])
-                this.setState({player: updatedPlayerHand})
-            } 
+                this.setState({ player: updatedPlayerHand })
+            }
             else {
                 otherPlayers.push(players[i])
             }
@@ -153,22 +153,22 @@ class GamePlay extends Component {
                 let first = allPlayers.shift()
                 allPlayers.push(first)
                 reArrangeOrder(allPlayers)
-            } 
+            }
         }
-        this.setState({otherPlayers, allPlayersJoined: true, joined: false, allPlayers})
+        this.setState({ otherPlayers, allPlayersJoined: true, joined: false, allPlayers })
     }
 
     // Preflop Betting
     allowPreflopBetting = data => {
         let { playersInHand, potTotal } = data
-        let {id} = this.props
+        let { id } = this.props
         let otherPlayers = []
         for (let i = 0; i < playersInHand.length; i++) {
             // if it is the players turn to bet (sent from server), then betTurn will be true which triggers a ternary in the render
             if (playersInHand[i].id === this.props.id && playersInHand[i].betTurn === true) {
 
                 let playersToSort = [...playersInHand];
-                let highestBet = playersToSort.sort( (a, b) => {
+                let highestBet = playersToSort.sort((a, b) => {
                     return b.bet - a.bet
                 })[0]
 
@@ -184,7 +184,7 @@ class GamePlay extends Component {
                         canCheck: false
                     })
                 }
-            } 
+            }
 
             // updates players and otherPlayers in state to reference for betting purposes
             if (playersInHand[i].id === this.props.id) {
@@ -205,15 +205,15 @@ class GamePlay extends Component {
                 let first = allPlayers.shift()
                 allPlayers.push(first)
                 reArrangeOrder(allPlayers)
-            } 
+            }
         }
-        this.setState({otherPlayers, potTotal, allPlayers})
+        this.setState({ otherPlayers, potTotal, allPlayers })
     }
 
     // This function will fire if the player has no money in order to update the screen but bypass needing to have the player take a turn
     noMoneyLeft = data => {
         let { playersInHand, potTotal } = data
-        let {id} = this.props
+        let { id } = this.props
         let otherPlayers = []
 
         for (let i = 0; i < playersInHand.length; i++) {
@@ -236,16 +236,16 @@ class GamePlay extends Component {
                 let first = allPlayers.shift()
                 allPlayers.push(first)
                 reArrangeOrder(allPlayers)
-            } 
+            }
         }
-        this.setState({otherPlayers, potTotal, allPlayers},
+        this.setState({ otherPlayers, potTotal, allPlayers },
             () => this.displayPreflopBetting())
     }
 
     setPreflopBetting = () => {
 
         let playersToSort = [...this.state.otherPlayers];
-        let highestBet = playersToSort.sort( (a, b) => {
+        let highestBet = playersToSort.sort((a, b) => {
             return b.bet - a.bet
         })[0]
 
@@ -261,7 +261,7 @@ class GamePlay extends Component {
                 player[0].bet += bettedAmount;
                 player[0].startMoney -= bettedAmount
                 player[0].betTurn = false
-                
+
                 this.setState({
                     betTurn: false,
                     player,
@@ -270,17 +270,17 @@ class GamePlay extends Component {
                     canCall: true
                 }, () => this.displayPreflopBetting())
             } else {
-                this.setState({enoughMoney: false, canCall: true})
+                this.setState({ enoughMoney: false, betAllowed: true, canCall: true })
             }
         } else if (player[0].startMoney < 50) {
             if (betAmount !== 25) {
-                this.setState({enoughMoney: false, canCall: true})
+                this.setState({ enoughMoney: false, betAllowed: true, canCall: true })
             } else {
                 let bettedAmount = parseInt(betAmount)
                 player[0].bet += bettedAmount;
                 player[0].startMoney -= bettedAmount
                 player[0].betTurn = false
-                
+
                 this.setState({
                     betTurn: false,
                     player,
@@ -289,11 +289,11 @@ class GamePlay extends Component {
                 }, () => this.displayPreflopBetting())
             }
         }
-          else {
+        else {
             // check value of bet to ensure it is at least 50, is divisible by 25, and is double the highest bet on the board
-            if (betAmount >= 50 && betAmount % 25 === 0 && betAmount/highestBet.bet >= 2) {
+            if (betAmount >= 50 && betAmount % 25 === 0 && betAmount / highestBet.bet >= 2) {
                 // Check if player has enough money to make the delcared bet
-                if (player[0].startMoney >= parseInt(betAmount)){
+                if (player[0].startMoney >= parseInt(betAmount)) {
                     // Adding the amount betted to the total bet
                     player[0].bet += parseInt(betAmount);
 
@@ -311,16 +311,17 @@ class GamePlay extends Component {
                         enoughMoney: true
                     }, () => this.displayPreflopBetting())
                 } else {
-                    this.setState({enoughMoney: false})
+                    this.setState({ enoughMoney: false, betAllowed: true })
                 }
             } else {
                 this.setState({
-                    betAllowed: false
+                    betAllowed: false,
+                    enoughMoney: true
                 })
             }
         }
     }
-    
+
     // Sending updated bet to server so it can be displayed to all players
     displayPreflopBetting = () => {
         this.socket.emit('turn of preflop betting', {
@@ -333,13 +334,13 @@ class GamePlay extends Component {
             room: this.state.room
         })
     }
-    
+
     displayTurnBetting = () => {
         this.socket.emit('turn betting', {
             room: this.state.room
         })
     }
-    
+
     displayRiverBetting = () => {
         this.socket.emit('river betting', {
             room: this.state.room
@@ -350,7 +351,7 @@ class GamePlay extends Component {
     callBet = () => {
         // Finds the highest current bet on the table
         let sortedOtherPlayers = [...this.state.otherPlayers]
-        let highestBet = sortedOtherPlayers.sort( (a, b) => {
+        let highestBet = sortedOtherPlayers.sort((a, b) => {
             return b.bet - a.bet
         })[0]
 
@@ -372,9 +373,10 @@ class GamePlay extends Component {
             }, () => this.displayPreflopBetting())
         } else {
             this.setState({
-                canCall: false, 
-                betAllowed: true, 
-                enoughMoney: true})
+                canCall: false,
+                betAllowed: true,
+                enoughMoney: true
+            })
         }
     }
 
@@ -411,21 +413,21 @@ class GamePlay extends Component {
 
     // recieve flop (or turn or river) from server and set state to display the flop
     setFlop = flop => {
-        this.setState({flop}, () => this.displayflopBetting())
+        this.setState({ flop }, () => this.displayflopBetting())
     }
-    
+
     setTurn = turn => {
-        this.setState({turn}, () => this.displayTurnBetting())
+        this.setState({ turn }, () => this.displayTurnBetting())
     }
-    
+
     setRiver = river => {
-        this.setState({river}, () => this.displayRiverBetting())
+        this.setState({ river }, () => this.displayRiverBetting())
     }
 
     displayWinners = data => {
-        let {winnerNames, potTotal} = data
+        let { winnerNames, potTotal } = data
         console.log(winnerNames)
-        this.setState({winnerNames, potTotal}, () => this.viewingWinners())
+        this.setState({ winnerNames, potTotal }, () => this.viewingWinners())
     }
 
     viewingWinners = () => {
@@ -452,8 +454,8 @@ class GamePlay extends Component {
     }
 
     leaveGame = () => {
-        let {initialMoney} = this.props
-        let {player} = this.state
+        let { initialMoney } = this.props
+        let { player } = this.state
 
         let moneyMade = player[0].startMoney - initialMoney
 
@@ -471,9 +473,9 @@ class GamePlay extends Component {
 
     render() {
 
-         // Each player will be looped over and run through this function in order to display their cards
+        // Each player will be looped over and run through this function in order to display their cards
         let showCards = (player) => {
-            let {cards} = this.state
+            let { cards } = this.state
             let cardOne = null
             let cardTwo = null
             for (let i = 0; i < cards.length; i++) {
@@ -481,17 +483,17 @@ class GamePlay extends Component {
                     cardOne = <img src={cards[i].image} alt='player card 1' />
                 }
                 if (player.cards[3] === cards[i].name) {
-                    cardTwo = <img src ={cards[i].image} alt='player card 2' />
+                    cardTwo = <img src={cards[i].image} alt='player card 2' />
                 }
             }
-                    if (cardOne !== null && cardTwo !== null) {
-                        return (
-                            <div className='cards'>
-                                {cardOne}
-                                {cardTwo}
-                            </div>
-                        )
-                    }
+            if (cardOne !== null && cardTwo !== null) {
+                return (
+                    <div className='cards'>
+                        {cardOne}
+                        {cardTwo}
+                    </div>
+                )
+            }
         }
 
         let mappedPlayers = this.state.allPlayers.map((player, i) => {
@@ -499,43 +501,57 @@ class GamePlay extends Component {
             return (
                 <div key='player.id'>
                     {i === 0 ?
-                    <div className={`seat${i}`}>
-                        {cards}
-                        <p>{player.username}: ${player.startMoney}</p>
-                        <p>Bet: ${player.bet}</p>
-                    </div>:
-                    <div className={`seat${i}`}>
-                        {this.state.winnerNames ? 
-                        <div>
-                            {cards} 
-                        </div>: 
-                        player.cards.length !== 0 ?
-                        <div className='cards'>
-                            <img src='https://cdn.shopify.com/s/files/1/0200/7616/products/playing-cards-superior-classic-back-1_1024x1024.png?v=1530155531' alt='card back' />
-                            <img src='https://cdn.shopify.com/s/files/1/0200/7616/products/playing-cards-superior-classic-back-1_1024x1024.png?v=1530155531' alt='card back' />
-                        </div> : null}
-                        <p>{player.username}: ${player.startMoney}</p>
-                        <p>Bet: ${player.bet}</p>
-                    </div>}
+                        <div className={`seat${i}`}>
+                            {cards}
+                            <p>{player.username}: ${player.startMoney}</p>
+                            {player.betTurn ? <div className='action'></div> : null}
+                            <p>Bet: ${player.bet}</p>
+                            {player.pokerId === 1 ? 
+                            <div className='SB'>SB</div> :
+                            player.pokerId === 2 ?
+                            <div className='BB'>BB</div> :
+                            player.pokerId === this.state.allPlayers.length ?
+                            <div className='D'>D</div>: null}
+                        </div> :
+                        <div className={`seat${i}`}>
+                            {this.state.winnerNames ?
+                                <div>
+                                    {cards}
+                                </div> :
+                                player.cards.length !== 0 ?
+                                    <div className='cards'>
+                                        <img src='https://cdn.shopify.com/s/files/1/0200/7616/products/playing-cards-superior-classic-back-1_1024x1024.png?v=1530155531' alt='card back' />
+                                        <img src='https://cdn.shopify.com/s/files/1/0200/7616/products/playing-cards-superior-classic-back-1_1024x1024.png?v=1530155531' alt='card back' />
+                                    </div> : null}
+                            <p>{player.username}: ${player.startMoney}</p>
+                            {player.betTurn ? <div className='action'></div> : null}
+                            <p>Bet: ${player.bet}</p>
+                            {player.pokerId === 1 ? 
+                            <div className='SB'>SB</div> :
+                            player.pokerId === 2 ?
+                            <div className='BB'>BB</div> :
+                            player.pokerId === this.state.allPlayers.length ?
+                            <div className='D'>D</div>: null}
+                        </div>}
                 </div>
             )
         })
 
         // When the flop is sent from the backend, this function will be fired to display the flop images
         let displayFlopImages = (flop) => {
-            let {cards} = this.state
+            let { cards } = this.state
             let cardOne = null
             let cardTwo = null
             let cardThree = null
             for (let i = 0; i < cards.length; i++) {
                 if (flop[0][1] === cards[i].name) {
-                    cardOne = <img src={cards[i].image} alt='player card 1' /> 
+                    cardOne = <img src={cards[i].image} alt='player card 1' />
                 }
                 if (flop[0][3] === cards[i].name) {
-                    cardTwo = <img src={cards[i].image} alt='player card 2' /> 
+                    cardTwo = <img src={cards[i].image} alt='player card 2' />
                 }
                 if (flop[0][5] === cards[i].name) {
-                    cardThree = <img src={cards[i].image} alt='player card 3' /> 
+                    cardThree = <img src={cards[i].image} alt='player card 3' />
                 }
             }
             if (cardOne !== null && cardTwo !== null && cardThree !== null)
@@ -549,109 +565,119 @@ class GamePlay extends Component {
         }
 
         let displayTurnAndRiver = (card) => {
-            let {cards} = this.state
+            let { cards } = this.state
             let cardOne = null
             for (let i = 0; i < cards.length; i++) {
                 if (card[0][1] === cards[i].name) {
-                    cardOne = <img src={cards[i].image} alt='player card 1' /> 
+                    cardOne = <img src={cards[i].image} alt='player card 1' />
                 }
             }
             if (cardOne !== null) {
                 return (
-                    <div className='turn-river'>
+                    <div className='turn'>
                         {cardOne}
                     </div>
                 )
             }
         }
-        
+
 
         return (
             <div className='whole-game-view'>
-                 {/* When a room has been joined the room name will display  */}
-                {this.state.joined ? 
-                <div>
-                    <h1> My Room: {this.state.room}</h1> 
-                    <h1> Number of Players Ready: {this.state.numberOfPlayersReady}</h1>
-                </div>: null}
-
-
-                {/* Display the winner for everyone to see */}
-                {this.state.winnerNames ? <h1>Winner: {this.state.winnerNames}</h1> : null}
+            <div className='poker-table'>
+                {/* When a room has been joined the room name will display  */}
+                {/* {this.state.joined ?
+                    <div className='players-joined'>
+                        <h1> My Room: {this.state.room}</h1>
+                        <h1> Number of Players Ready: {this.state.numberOfPlayersReady}</h1>
+                    </div> : null} */}
 
                 {/* When a room has been joined then the player can ready up. After all players are ready, cards can be displayed */}
-                {this.state.joinPressed === false ? 
-                <div>
-                    <input value={this.state.room} onChange={e => this.setState({room: e.target.value})} />
-                    <button onClick={this.joinRoom}>Join</button>
-                </div>:
+                {this.state.joinPressed === false ?
+                    <div className='join-room'>
+                        <h3>Type the table name you would like to join</h3>
+                        <input value={this.state.room} onChange={e => this.setState({ room: e.target.value })} />
+                        <button onClick={this.joinRoom}>Join</button>
+                    </div> :
                     // Checks if all players including self has indicated they are ready to play
                     this.state.ready === false ?
-                    <button onClick={() => this.readyToPlay()}>Ready</button> : 
-                    this.state.allPlayersJoined ?
-                    // This is where gameplay is displayed
-                    <div className='gameplay'>
-                    {/* Displays pot total as it changes */}
-                    <p>Pot Total: {this.state.potTotal}</p>
-                    {mappedPlayers}
-                    {/* PreFlop betting ternary, checks if it is players turn to bet and if they can check*/}
-                        {this.state.betTurn && this.state.canCheck ?
-                        <div>
-                            <button onClick={() => this.fold()}>Fold</button>
-                            <button onClick={() => this.check()}>Check</button>
-                            <input 
-                                type='number'
-                                onChange={(e) => this.setState({
-                                    betAmount: e.target.value
-                                })}/>
-                            <button onClick={() => this.setPreflopBetting()}>Bet</button>
-                            {/* Display messages for edge cases of not having enough money for certain actions */}
-                            {this.state.canCall ? null : <p>You do not have enough money to call. You will need to either fold or bet all of your money</p>}
-                            {this.state.enoughMoney ? null : <p>Sorry, this bet is not allowed</p>}
-                            {this.state.betAllowed ? null : <p>All bets must be at least 50, in increments of 25, and be at least double the last bet.</p>}
-                        </div> : 
-                        // Checks if it is players turn to bet and if they cannot check
-                        this.state.betTurn ? 
-                        <div>
-                            <button onClick={() => this.fold()}>Fold</button>
-                            <button onClick={() => this.callBet()}>Call</button>
-                            <input 
-                                type='number'
-                                onChange={(e) => this.setState({
-                                    betAmount: e.target.value
-                                })}/>
-                            <button onClick={() => this.setPreflopBetting()}>Raise</button>
-                            {this.state.canCall ? null : <p>You do not have enough money to call. You will need to either fold or bet all of your money</p>}
-                            {this.state.enoughMoney ? null : <p>Sorry, this bet is not allowed</p>}
-                            {this.state.betAllowed ? null : <p>All bets must be at least 50, in increments of 25, and be at least double the last bet.</p>}
-                        </div>: null}
-                    </div> :
-                    <p>Waiting on other players...</p>
+                        <div className='players-joined'>
+                            <h1> My Room: {this.state.room}</h1>
+                            <h1> Number of Players Ready: {this.state.numberOfPlayersReady}</h1>
+                            <button onClick={() => this.readyToPlay()}>Ready</button>
+                            <h1>Click Ready, only when all players are ready</h1>
+                        </div> :
+                        this.state.allPlayersJoined ?
+                            // This is where gameplay is displayed
+                            <div className='gameplay'>
+                                {/* Displays pot total as it changes */}
+                                <p className='pot'>Pot Total: ${this.state.potTotal}</p>
+                                {/* Display the winner for everyone to see */}
+                                {this.state.winnerNames ? <h1>Winner: {this.state.winnerNames}</h1> : null}
+                                {mappedPlayers}
+                                {/* PreFlop betting ternary, checks if it is players turn to bet and if they can check*/}
+                                {this.state.betTurn && this.state.canCheck ?
+                                    <div className='bet-turn'>
+                                        <button onClick={() => this.fold()}>Fold</button>
+                                        <button onClick={() => this.check()}>Check</button>
+                                        <input
+                                            type='number'
+                                            onChange={(e) => this.setState({
+                                                betAmount: e.target.value
+                                            })} />
+                                        <button onClick={() => this.setPreflopBetting()}>Bet</button>
+                                        {/* Display messages for edge cases of not having enough money for certain actions */}
+                                        {this.state.canCall ? null : <p>You do not have enough money to call. You will need to either fold or bet all of your money</p>}
+                                        {this.state.enoughMoney ? null : <p>Sorry, this bet is not allowed</p>}
+                                        {this.state.betAllowed ? null : <p>All bets must be at least 50, in increments of 25, and be at least double the last bet.</p>}
+                                    </div> :
+                                    // Checks if it is players turn to bet and if they cannot check
+                                    this.state.betTurn ?
+                                        <div className='bet-turn'>
+                                            <button onClick={() => this.fold()}>Fold</button>
+                                            <button onClick={() => this.callBet()}>Call</button>
+                                            <input
+                                                type='number'
+                                                onChange={(e) => this.setState({
+                                                    betAmount: e.target.value
+                                                })} />
+                                            <button onClick={() => this.setPreflopBetting()}>Raise</button>
+                                            {this.state.canCall ? null : <p className='rule-reminder'>You do not have enough money to call. You will need to either fold or bet all of your money</p>}
+                                            {this.state.enoughMoney ? null : <p className='rule-reminder'>Sorry, this bet is not allowed</p>}
+                                            {this.state.betAllowed ? null : <p className='rule-reminder'>All bets must be at least 50, in increments of 25, and be at least double the last bet.</p>}
+                                        </div> : null}
+                                {this.state.winnerNames && this.state.player[0].pokerId !== 2 ?
+                                    <div className='leave'>
+                                        <h2>You may leave the game</h2>
+                                        <Link to='/homepage'>
+                                            <button
+                                                onClick={() => this.leaveGame()}
+                                            >Leave Game</button>
+                                        </Link>
+                                    </div>
+                                    : null}
+                            </div> :
+                            <p className='waiting'>Waiting on other players...</p>
                 }
-                {/* Display flop once it has been sent to the frontend */}
-                {this.state.flop ? displayFlopImages(this.state.flop) : null}
-                {/* Display turn once it has been sent to the frontend */}
-                {this.state.turn ? displayTurnAndRiver(this.state.turn) : null}
-                {/* Display river once it has been sent to the frontend */}
-                {this.state.river ? displayTurnAndRiver(this.state.river) : null}
-
-                {this.state.winnerNames && this.state.player[0].pokerId !== 2 ? 
-                <div>
-                    <h2>You may leave the game</h2>
-                    <Link to='/homepage'>
-                        <button
-                        onClick={() => this.leaveGame()}
-                        >Leave Game</button>
-                    </Link>
+                <div className='board'>
+                    {/* Display flop once it has been sent to the frontend */}
+                    {this.state.flop ?
+                        <div className='flop-board'> {displayFlopImages(this.state.flop)} </div> : null}
+                    {/* Display turn once it has been sent to the frontend */}
+                    {this.state.turn ?
+                        <div className='turn-board'>{displayTurnAndRiver(this.state.turn)} </div> : null}
+                    {/* Display river once it has been sent to the frontend */}
+                    {this.state.river ?
+                        <div className='river'> {displayTurnAndRiver(this.state.river)} </div> : null}
                 </div>
-                : null}
+            </div>
             </div>
         );
     }
 }
 
 function mapStateToProps(state) {
-    return {...state}
+    return { ...state }
 }
 
 export default connect(mapStateToProps, {})(GamePlay);

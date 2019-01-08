@@ -51,6 +51,17 @@ module.exports = {
             console.log(error)
         })
     },
+    getPersonal: (req, res) => {
+        const db = req.app.get('db')
+        const personalId = req.params.id
+
+        db.get_personal([personalId])
+        .then( stats => res.status(200).send(stats))
+        .catch ( error => {
+            res.status(500).send('500 Error')
+            console.log(error)
+        })
+    },
     updateStats: (req, res) => {
         let {moneyMade, id} = req.body;
         const db = req.app.get('db');
@@ -73,8 +84,8 @@ module.exports = {
         }
     },
     deleteAccount: (req, res) => {
-        const deleteId = req.params.id;
         const db = req.app.get('db');
+        const deleteId = req.params.id;
 
         db.delete_account([deleteId])
         .catch( error => {

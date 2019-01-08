@@ -27,6 +27,7 @@ massive(CONNECTION_STRING).then( db => {
 app.post('/auth/register', controller.register);
 app.post('/auth/login', controller.login);
 app.get('/api/leaderboard', controller.getLeaderboard);
+app.get('/api/personal/:id', controller.getPersonal);
 app.put('/api/updateStats', controller.updateStats);
 app.delete('/api/delete/:id', controller.deleteAccount);
 
@@ -119,7 +120,6 @@ io.on('connection', socket => {
             playersInHand.push(players[i])
     
         }
-        console.log(playersInHand);
 
         // Deal Board
         let dealtFlop = deck.draw(3)
@@ -177,7 +177,6 @@ io.on('connection', socket => {
             if(playersInHand[i].cards.length !== 0) {
                 let bAndH = [];
                 bAndH.push(flop[0][0], flop[0][2], flop[0][4], turn[0][0], river[0][0], playersInHand[i].cards[0], playersInHand[i].cards[2])
-                console.log(bAndH)
                 let boardAndHand = _.flattenDeep(bAndH)
                 let score = evaluateCards(boardAndHand)
                 playersInHand[i].score = score;
@@ -206,7 +205,6 @@ io.on('connection', socket => {
             for (let k = 0; k < winners.length; k++) {
                 if (playersInHand[i].id === winners[k].id) {
                     playersInHand[i].startMoney += winnings
-                    console.log(playersInHand[i])
                 }
             }
         }
@@ -349,20 +347,16 @@ io.on('connection', socket => {
                 arr[i].bet = 0
                 arr[i].betTurn = false
             })
-            console.log('ready to shuffle', players)
         
         shuffleAndDeal(players, data)
     })
 
     socket.on('leave game', data => {
-        console.log('before leaving', players)
         for (let i = 0; i < players.length; i++) {
             if (data.id === players[i].id) {
                 players.splice(i, 1)
-                console.log('player deleted', i)
             }
         }
-        console.log('player left', players)
         console.log('Left Room', data.room)
         socket.leave(data.room)
     })
@@ -370,7 +364,7 @@ io.on('connection', socket => {
 
 
     socket.on('disconnect', () => {
-        console.log('User disconneted')
+        console.log('User disconnected')
     })
 })
 

@@ -35,11 +35,11 @@ values (500, 1000000, 4);
 -- register player to stats table
 
 insert into stats (games_played, money_won, player_id)
-values(0.1, 0, $1);
+values(0, 0, $1);
 
 -- Join players and stats and only grab top 10 by money_won
 
-SELECT p.id, p.username, round(s.games_played), s.money_won, s.money_won / s.games_played AS money_per_game
+SELECT p.id, p.username, s.games_played, s.money_won
 FROM players p
 INNER JOIN stats s ON p.id = s.player_id
 ORDER BY money_won desc
