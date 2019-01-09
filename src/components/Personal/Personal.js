@@ -29,6 +29,9 @@ class Personal extends Component {
                 let newMoneyWon = parseInt(res.data[0].money_won.replace('$', '').replace(',', '').replace(',', ''))
                 let gamesPlayed = parseInt(res.data[0].games_played)
                 let moneyPerGame = newMoneyWon / gamesPlayed
+                if (gamesPlayed === 0) {
+                    moneyPerGame = 0
+                }
                 this.setState({
                     stats: res.data,
                     moneyPerGame

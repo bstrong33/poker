@@ -2,6 +2,24 @@
   text-align: center;
 }
 
+button {
+  color: black;
+  border: 2px solid black;
+  background-color: white;
+  border-radius: 16px;
+  width: 6vw;
+  cursor: pointer;
+}
+
+button:active {
+  /* box-shadow: 0 2px rgb(71, 71, 71); */
+  background-color: rgb(221, 221, 221);
+}
+
+button:focus {
+  outline: none;
+}
+
 /* Login */
 
 .login-background {
@@ -17,18 +35,19 @@
 .login {
   background-color: black;
   background: rgba(0, 0, 0, 0.8);
-  border-radius: 5%;
+  border-radius: 16px;
   height: 25vh;
   width: 25vw;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
 }
 
 .login h3 {
   color: white;
   font-size: 30px;
-  margin-bottom: 3vh;
+  margin-bottom: 1vh;
 }
 
 .login p {
@@ -39,12 +58,17 @@
   background-color: transparent;
   color: white;
   border: none;
-  border-bottom: 2px blue solid;
+  border-bottom: 2px white solid;
+  margin-top: 5px;
 }
 
 input:focus {
   outline: none;
-  /* box-shadow: 0 0 10px #719ECE; */
+  box-shadow: 0 0 10px #719ECE;
+}
+
+.login button {
+  margin-top: 5px;
 }
 
 .login-error {
@@ -80,7 +104,7 @@ h2 {
   align-items: center;
   background-color: black;
   opacity: .8;
-  border-radius: 5%;
+  border-radius: 16px;
   height: 80vh;
   width: 32vw;
 }
@@ -112,7 +136,7 @@ h2 {
 
 .view-account {
   background: rgba(0, 0, 0, 0.8);
-  border-radius: 5%;
+  border-radius: 16px;
   color:white;
   width: 32vw;
   height: 15vh;
@@ -127,9 +151,9 @@ h2 {
 
 .add-money {
   background: rgba(0, 0, 0, 0.8);
-  border-radius: 5%;
+  border-radius: 16px;
   color: white;
-  height: 25vh;
+  height: 30vh;
   width: 32vw;
   display: flex;
   flex-direction: column;
@@ -138,15 +162,25 @@ h2 {
 }
 
 .inner-money-div {
-  height: 30vh;
+  height: 35vh;
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
+  justify-content: center;
+  align-items: center;
+}
+
+.inner-money-div p {
+  margin-top: 1.5vh;
+}
+
+.inner-money-div input {
+  margin-top: 1.5vh;
+  margin-bottom: 1.5vh;
 }
 
 .join-game {
   background: rgba(0, 0, 0, 0.8);
-  border-radius: 5%;
+  border-radius: 16px;
   color: white;
   height: 15vh;
   display: flex;
@@ -197,7 +231,7 @@ h2 {
   align-items: center;
   background-color: black;
   opacity: .8;
-  border-radius: 5%;
+  border-radius: 16px;
   height: 25vh;
   width: 62vw;
 }
@@ -216,7 +250,7 @@ h2 {
   align-items: center;
   background-color: black;
   opacity: .8;
-  border-radius: 5%;
+  border-radius: 16px;
   color: white;
   width: 18vw;
   height: 25vh;
@@ -234,7 +268,7 @@ h4 {
   align-items: space-around;
   background-color: black;
   opacity: .8;
-  border-radius: 5%;
+  border-radius: 16px;
   color: white;
   width: 18vw;
 }
@@ -289,6 +323,15 @@ h4 {
   justify-content: center;
 }
 
+.gameplay button:hover {
+  color: white;
+  background-color: black;
+}
+
+.gameplay button:active {
+  background-color: black;
+}
+
 .cards {
   height: 13vh;
   width: auto;
@@ -308,11 +351,31 @@ h4 {
   width: auto;
 }
 
+.deck {
+  height: 13vh;
+  width: auto;
+}
+
+.deck img {
+  max-height: 100%;
+}
+
+.flop-placeholder {
+  height: 13vh;
+  width: 29vh;
+}
+
+.turn-placeholder {
+  height: 13vh;
+  width: 9vh;
+}
+
 .flop {
   height: 13vh;
   width: auto;
   display: flex;
 }
+
 
 .flop img {
   max-height: 100%;
@@ -503,7 +566,7 @@ h4 {
   align-items: center;
   background-color: black;
   opacity: .8;
-  border-radius: 5%;
+  border-radius: 16px;
   color: white;
   font-size: 3vh;
   width: 18vw;
@@ -517,7 +580,7 @@ h4 {
   align-items: center;
   background-color: black;
   opacity: .8;
-  border-radius: 5%;
+  border-radius: 16px;
   color: white;
   font-size: 2.5vh;
   width: 18vw;
@@ -539,7 +602,7 @@ h4 {
   align-items: center;
   background-color: black;
   opacity: .8;
-  border-radius: 5%;
+  border-radius: 16px;
   color: white;
   font-size: 2.5vh;
   width: 18vw;

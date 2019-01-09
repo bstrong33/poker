@@ -648,11 +648,11 @@ class GamePlay extends Component {
                                         </div> : null}
                                 {this.state.winnerNames && this.state.player[0].pokerId !== 2 ?
                                     <div className='leave'>
-                                        <h2>You may leave the game</h2>
+                                        <h2>You may leave the game:</h2>
                                         <Link to='/homepage'>
                                             <button
                                                 onClick={() => this.leaveGame()}
-                                            >Leave Game</button>
+                                            >Leave</button>
                                         </Link>
                                     </div>
                                     : null}
@@ -660,12 +660,20 @@ class GamePlay extends Component {
                             <p className='waiting'>Waiting on other players...</p>
                 }
                 <div className='board'>
+                    {this.state.allPlayersJoined ?
+                    <div className='deck'>
+                        <img src='https://cdn.shopify.com/s/files/1/0200/7616/products/playing-cards-superior-classic-back-1_1024x1024.png?v=1530155531' alt='card back' />
+                    </div> : null}
                     {/* Display flop once it has been sent to the frontend */}
                     {this.state.flop ?
-                        <div className='flop-board'> {displayFlopImages(this.state.flop)} </div> : null}
+                        <div className='flop-board'> {displayFlopImages(this.state.flop)} </div> : 
+                        this.state.allPlayersJoined ?
+                        <div className='flop-placeholder'></div> : null}
                     {/* Display turn once it has been sent to the frontend */}
                     {this.state.turn ?
-                        <div className='turn-board'>{displayTurnAndRiver(this.state.turn)} </div> : null}
+                        <div className='turn-board'>{displayTurnAndRiver(this.state.turn)} </div> : 
+                        this.state.allPlayersJoined ?
+                        <div className='turn-placeholder'></div> : null}
                     {/* Display river once it has been sent to the frontend */}
                     {this.state.river ?
                         <div className='river'> {displayTurnAndRiver(this.state.river)} </div> : null}

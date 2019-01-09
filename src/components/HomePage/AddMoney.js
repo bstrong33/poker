@@ -13,7 +13,7 @@ class AddMoney extends Component {
     }
 
     BuyIn = () => {
-        if (this.state.input >= 500 && this.state.input <= 2000) {
+        if (this.state.input >= 500 && this.state.input <= 2000 && this.state.input % 50 === 0) {
             this.setState({
                 buyIn: this.state.input
             })
@@ -27,6 +27,7 @@ class AddMoney extends Component {
             <div className='inner-money-div'>
                 <h2>Buy-in Amount</h2>
                 <p>Must be between $500-$2000</p>
+                <p>Must be in increments of $50</p>
                 <input
                     type='number'
                     onChange={e => this.setState({ input: e.target.value })}
