@@ -263,6 +263,7 @@ io.on('connection', socket => {
         function checkBets (player) {
             return player.bet === highestBet.bet || player.startMoney === 0
         }
+
         // Checks if all players with cards have equal bets or if they are out of money, if not keep running betting
         // Also checks how many turns have been taken and which round of betting has commenced
         if (playersWithCards.every(checkBets) && riverRevealed && turnsTaken >= playersWithCards.length + playersFolded) {
