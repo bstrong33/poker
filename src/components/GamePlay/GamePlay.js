@@ -146,15 +146,21 @@ class GamePlay extends Component {
             }
         }
 
+        let reRun = 0
+
         let allPlayers = [...players]
         reArrangeOrder(allPlayers)
+
         function reArrangeOrder(allPlayers) {
-            if (allPlayers[0].id !== id) {
+            if (allPlayers[0].id !== id && reRun < 9) {
                 let first = allPlayers.shift()
                 allPlayers.push(first)
+                reRun++;
                 reArrangeOrder(allPlayers)
             }
         }
+
+
         this.setState({ otherPlayers, allPlayersJoined: true, joined: false, allPlayers })
     }
 
@@ -198,12 +204,17 @@ class GamePlay extends Component {
                 otherPlayers.push(playersInHand[i])
             }
         }
+
+        let reRun = 0
+
         let allPlayers = [...playersInHand]
         reArrangeOrder(allPlayers)
+
         function reArrangeOrder(allPlayers) {
-            if (allPlayers[0].id !== id) {
+            if (allPlayers[0].id !== id && reRun < 9) {
                 let first = allPlayers.shift()
                 allPlayers.push(first)
+                reRun++
                 reArrangeOrder(allPlayers)
             }
         }

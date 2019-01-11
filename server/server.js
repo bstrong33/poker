@@ -52,6 +52,8 @@ let turnsTaken = 0;
 let potTotal = 75;
 let playersFolded = 0;
 let reshuffle = true;
+let roomName = '';
+let evaluateCount = 0;
 
 
 // Sockets
@@ -65,6 +67,7 @@ io.on('connection', socket => {
 
     socket.on('join room', data => {
         console.log('Room joined', data.room)
+        roomName = data.room
         socket.join(data.room)
         prePlayersReady++
         io.to(data.room).emit('room joined', prePlayersReady);
@@ -230,7 +233,7 @@ io.on('connection', socket => {
         pokerIdTurn++
         turnsTaken++
         for (let i = 0; i < playersInHand.length; i++) {
-            // updates potTotal by looking at the difference in the old and new bet, but only if bet is not zero (prevents potTotal decreaseing on a fold)
+            // updates potTotal by looking at the difference in the old and new bet, but only if bet is not zero (prevents potTotal decreasing on a fold)
             // Takes the player who just had a turn and updates the playersInHand array with their new information
             if (data.player[0].id === playersInHand[i].id) {
                 if (data.player[0].bet !== 0) {
@@ -268,7 +271,8 @@ io.on('connection', socket => {
 
         // Checks if all players with cards have equal bets or if they are out of money, if not keep running betting
         // Also checks how many turns have been taken and which round of betting has commenced
-        if (playersWithCards.every(checkBets) && riverRevealed && turnsTaken >= playersWithCards.length + playersFolded) {
+        if (playersWithCards.every(checkBets) && riverRevealed && turnsTaken >= playersWithCards.length + playersFolded && evaluateCount < 1) {
+            evaluateCount++
             playersFolded = 0
             console.log('ready to evaluate hands')
             evaluateHands(data)
@@ -337,6 +341,7 @@ io.on('connection', socket => {
             potTotal = 75;
             playersFolded = 0;
             reshuffle = false;
+            evaluateCount = 0;
 
             // Checks to make sure the first person in the array didn't leave the game. If they are still there this will move them to the end of the array.
             if (players[0].pokerId === 1) {
@@ -367,6 +372,27 @@ io.on('connection', socket => {
 
 
     socket.on('disconnect', () => {
+
+        players.pop();
+        playersReady = 0;
+        prePlayersReady = 0;;
+        pokerId = 1;
+        pokerIdTurn = 3;
+        flop = [[]];
+        turn = [[]];
+        river = [[]];
+        flopRevealed = false;
+        turnRevealed = false;
+        riverRevealed = false;
+        turnsTaken = 0;
+        potTotal = 75;
+        playersFolded = 0;
+        reshuffle = false;
+        evaluateCount = 0;
+
+
+        socket.leave(roomName)
+        console.log('Exited Room', roomName)
         console.log('User disconnected')
     })
 })

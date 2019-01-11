@@ -1,14 +1,16 @@
 .App {
   text-align: center;
+  font-size: 2.75vh;
 }
 
 button {
   color: black;
-  border: 2px solid black;
   background-color: white;
   border-radius: 16px;
   width: 6vw;
   cursor: pointer;
+  height: 2.5vh;
+  font-size: 1.5vh;
 }
 
 button:active {
@@ -18,6 +20,10 @@ button:active {
 
 button:focus {
   outline: none;
+}
+
+input {
+  height: 2vh;
 }
 
 /* Login */
@@ -46,12 +52,13 @@ button:focus {
 
 .login h3 {
   color: white;
-  font-size: 30px;
+  font-size: 5vh;
   margin-bottom: 1vh;
 }
 
 .login p {
   color: white;
+  font-size: 2.5vh;
 }
 
 .login input {
@@ -59,7 +66,8 @@ button:focus {
   color: white;
   border: none;
   border-bottom: 2px white solid;
-  margin-top: 5px;
+  margin-top: 1vh;
+  height: 2vh;
 }
 
 input:focus {
@@ -68,11 +76,11 @@ input:focus {
 }
 
 .login button {
-  margin-top: 5px;
+  margin-top: 1vh;
 }
 
 .login-error {
-  margin-top: 7px;
+  margin-top: 1vh;
 }
 
 /* Homepage */
@@ -92,7 +100,7 @@ input:focus {
 h2 {
   color: white;
   font-size: 5vh;
-  margin-bottom: 8px;
+  margin-bottom: 1vh;
 }
 
 /* Leaderboard */
@@ -116,10 +124,11 @@ h2 {
   border-right: 2px solid white;
   height: 70vh;
   width: 30vw; 
+  font-size: 2vh;
 }
 
 .grid span {
-  padding: 8px 4px;
+  padding-top: 2vh;
   border-left: 2px solid white;
   border-bottom: 2px solid white;
   color: white;
@@ -146,7 +155,7 @@ h2 {
 }
 
 .view-account h2 {
-  margin-bottom: 18px;
+  margin-bottom: 1vh;
 }
 
 .add-money {
@@ -189,11 +198,11 @@ h2 {
 }
 
 .join-game h2 {
-  margin-bottom: 18px;
+  margin-bottom: 1.5vh;
 }
 
 .join-game button {
-  margin-bottom: 5px;
+  margin-bottom: 1vh;
 }
 
 .personal-background {
@@ -217,7 +226,7 @@ h2 {
 }
 
 .pgrid span {
-  padding: 8px 4px;
+  padding-top: 2vh;
   border-left: 2px solid white;
   border-bottom: 2px solid white;
   color: white;
@@ -321,6 +330,11 @@ h4 {
   /* position: relative; */
   display: flex;
   justify-content: center;
+}
+
+.gameplay button {
+  border: 2px solid black;
+  height: 3vh;
 }
 
 .gameplay button:hover {
@@ -492,7 +506,7 @@ h4 {
   font-size: 3vh;
   width: 30vw;
   text-align: center;
-  margin-top: 5px;
+  margin-top: 1vh;
 }
 
 .pot {
@@ -522,8 +536,8 @@ h4 {
 .SB {
   background-color: blue;
   border-radius: 100%;
-  width: 2rem;
-  line-height: 2rem;
+  width: 4vh;
+  line-height: 4vh;
   margin-top: 2px;
   z-index: 1;
 }
@@ -532,8 +546,8 @@ h4 {
   background-color: yellow;
   color: black;
   border-radius: 100%;
-  width: 2rem;
-  line-height: 2rem;
+  width: 4vh;
+  line-height: 4vh;
   margin-top: 2px;
   z-index: 1;
 }
@@ -542,8 +556,8 @@ h4 {
   background-color: white;
   color: black;
   border-radius: 100%;
-  width: 2rem;
-  line-height: 2rem;
+  width: 4vh;
+  line-height: 4vh;
   margin-top: 2px;
   z-index: 1;
 }
@@ -551,8 +565,8 @@ h4 {
 .action {
   position: absolute;
   background-color: orange;
-  height: 7rem;
-  width: 7rem;
+  height: 16vh;
+  width: 16vh;
   border-radius: 100%;
   top: 30%;
   opacity: .4;
