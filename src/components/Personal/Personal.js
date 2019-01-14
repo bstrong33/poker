@@ -65,7 +65,7 @@ class Personal extends Component {
                     <span>{stats[0].username}</span>
                     <span>{stats[0].games_played}</span>
                     <span>{stats[0].money_won}</span>
-                    <span>{moneyPerGame}</span>
+                    <span>${parseInt(moneyPerGame)}</span>
                 </div>
                 </div>
                 <div className='back-and-delete'>
