@@ -31,7 +31,7 @@ input {
 .login-background {
   height: 100vh;
   width: 100vw;
-  background-image: url('http://www.usclimateplan.org/wp-content/uploads/2018/11/full-hd-p-las-vegas-wallpapers-desktop-backgrounds-1680-1050-complex-wallpaper-hd-awesome-0.jpg');
+  background-image: url('./vegas.jpg');
   background-size: cover;
   display: flex;
   justify-content: center;
@@ -88,9 +88,9 @@ input:focus {
 .homepage-background {
   height: 100vh;
   width: 100vw;
-  background-image: url('http://www.pizzarusticachicago.com/upload/2018/09/13/f157aed99e47df4f.jpg');
+  background-image: url('./casino.jpg');
   background-size: cover;
-  background-position: bottom center;
+  background-position: center;
   display: flex;
   align-items: center;
   justify-content: space-around;
